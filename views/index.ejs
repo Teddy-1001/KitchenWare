@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>KitchenStore — Premium Kitchenware</title>
+</head>
+
+<body>
+    <!-- Flash sale top bar -->
+    <div class="bg-amber-600 text-white overflow-hidden border-b border-amber-700/30">
+        <div class="flash-track py-2.5 text-xs sm:text-sm font-medium tracking-wide">
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-fire text-amber-200"></i> FLASH SALE: Up to 50% OFF Premium Cookware
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-truck text-amber-200"></i> Free Delivery in Kenya on Orders Above KES 5,000
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-gift text-amber-200"></i> Buy 2 Kitchen Tools, Get 1 FREE
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-clock text-amber-200"></i> Limited Time Offer Ends Tonight
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-shield-halved text-amber-200"></i> Secure Payments · Cash on Delivery Available
+            </span>
+            <!-- duplicate for seamless loop -->
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-fire text-amber-200"></i> FLASH SALE: Up to 50% OFF Premium Cookware
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-truck text-amber-200"></i> Free Delivery in Kenya on Orders Above KES 5,000
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-gift text-amber-200"></i> Buy 2 Kitchen Tools, Get 1 FREE
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-clock text-amber-200"></i> Limited Time Offer Ends Tonight
+            </span>
+            <span class="inline-flex items-center gap-2 px-10 shrink-0">
+                <i class="fa-solid fa-shield-halved text-amber-200"></i> Secure Payments · Cash on Delivery Available
+            </span>
+        </div>
+    </div>
+    <%- include("../partials/header.ejs") %>
+        <!-- hero section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 lg:pb-14 pt-5">
+            <div class="relative overflow-hidden rounded-3xl border border-zinc-200/80 shadow-sm min-h-[440px] lg:min-h-[500px]">
+                <div class="absolute inset-0">
+                    <img src="/images/17580.jpg" alt="" class="w-full h-full object-cover" aria-hidden="true">
+                </div>
+
+                <div class="relative z-10 flex flex-col lg:flex-row min-h-[440px] lg:min-h-[500px]">
+                    <div class="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
+                        <div class="max-w-lg">
+                            <span class="inline-block px-3.5 py-1 rounded-full bg-amber-500 text-white text-xs font-semibold uppercase tracking-wider mb-4">
+                                KitchenStore
+                            </span>
+                            <h2 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-zinc-900 leading-[1.1] tracking-tight">
+                                Discover The Best Products
+                            </h2>
+                            <p class="text-sm sm:text-base text-zinc-700 mt-4 leading-relaxed max-w-md">
+                                Premium cookware, utensils and kitchen tools loved by
+                                our customers. Shop now for quality and style!
+                            </p>
+                            <div class="flex flex-wrap gap-3 mt-6">
+                                <a href="/cookware"
+                                    class="inline-flex items-center justify-center rounded-xl py-3 px-6 bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold tracking-wide transition shadow-sm">
+                                    SHOP NOW
+                                </a>
+                                <a href="/offers"
+                                    class="inline-flex items-center gap-2 rounded-xl py-3 px-6 text-zinc-900 border border-zinc-300 bg-white/90 hover:bg-white text-sm font-semibold tracking-wide transition">
+                                    EXPLORE <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <ul class="mt-8 grid grid-cols-1 sm:grid-cols-3 bg-white/95 backdrop-blur-sm rounded-2xl border border-zinc-200/90 overflow-hidden divide-y sm:divide-y-0 sm:divide-x divide-zinc-200">
+                            <li class="flex items-center gap-3 p-4 hover:bg-amber-50/80 transition">
+                                <span class="h-10 w-10 shrink-0 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-truck-fast text-sm"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <h4 class="text-xs font-semibold text-zinc-800 uppercase tracking-wide">Free Shipping</h4>
+                                    <p class="text-[11px] text-zinc-500 mt-0.5">Orders above KES 4,500</p>
+                                </div>
+                            </li>
+                            <li class="flex items-center gap-3 p-4 hover:bg-amber-50/80 transition">
+                                <span class="h-10 w-10 shrink-0 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-headset text-sm"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <h4 class="text-xs font-semibold text-zinc-800 uppercase tracking-wide">24/7 Support</h4>
+                                    <p class="text-[11px] text-zinc-500 mt-0.5">Help anytime you need</p>
+                                </div>
+                            </li>
+                            <li class="flex items-center gap-3 p-4 hover:bg-amber-50/80 transition">
+                                <span class="h-10 w-10 shrink-0 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center">
+                                    <i class="fa-solid fa-hand-holding-dollar text-sm"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <h4 class="text-xs font-semibold text-zinc-800 uppercase tracking-wide">Cash on Delivery</h4>
+                                    <p class="text-[11px] text-zinc-500 mt-0.5">Pay when you receive</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="hidden lg:flex items-end justify-center px-8 pb-6 lg:w-[36%] xl:w-[34%]">
+                        <img src="/images/Untitled_design-removebg-preview.png"
+                            alt="KitchenStore premium kitchenware"
+                            class="w-full max-w-xs xl:max-w-sm object-contain drop-shadow-2xl">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+
+            <!-- section 1 -->
+            <section class="py-6 lg:py-8">
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+                    <!-- LEFT SIDEBAR (1/4) -->
+                    <aside class="lg:col-span-1 flex flex-col space-y-4">
+
+                        <div class="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
+
+                            <h2 class="bg-amber-500 text-white px-4 py-3 font-semibold tracking-wide">
+                                Categories
+                            </h2>
+
+                            <ul class="divide-y divide-zinc-100 text-sm">
+                                <li><a href="/all-utensils"
+                                        class="block px-4 py-3 text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition">All Utensils</a>
+                                </li>
+                                <li><a href="/all-utensils?category=cookware"
+                                        class="block px-4 py-3 text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition">Cookware</a>
+                                </li>
+                                <li><a href="/all-utensils?category=storage"
+                                        class="block px-4 py-3 text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition">Storage</a>
+                                </li>
+                                <li><a href="/all-utensils?category=dining"
+                                        class="block px-4 py-3 text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition">Dining</a>
+                                </li>
+                                <li><a href="/all-utensils?category=knives"
+                                        class="block px-4 py-3 text-zinc-700 hover:bg-amber-50 hover:text-amber-700 transition">Knives
+                                        Tools</a></li>
+                            </ul>
+
+                        </div>
+                        <div class="bg-zinc-950 text-white rounded-xl p-5 shadow-sm border border-zinc-800">
+                            <h3 class="font-semibold text-lg">Hot Deals 🔥</h3>
+                            <p class="text-sm text-zinc-300 mt-2 leading-relaxed">
+                                Up to 40% off selected cookware
+                            </p>
+                            <a href="/offers"
+                                class="inline-block mt-4 text-sm font-medium text-amber-400 hover:text-amber-300 transition">View
+                                deals →</a>
+                        </div>
+
+
+                    </aside>
+
+                    <!-- MIDDLE CONTENT -->
+                    <div class="lg:col-span-2 w-full min-w-0">
+
+                        <div class="mb-4">
+                            <h2 class="text-xl font-semibold text-zinc-800">Featured Products</h2>
+                            <p class="text-sm text-zinc-500 mt-0.5">Top kitchen essentials for your home</p>
+                        </div>
+                        <div
+                            class="relative flex flex-col md:flex-row items-center overflow-hidden rounded-2xl border border-amber-200/70 bg-amber-50 shadow-sm">
+                            <div class="px-6 py-8 md:py-10 md:max-w-[55%]">
+                                <h1 class="text-3xl sm:text-4xl font-bold text-amber-700 mb-3 leading-tight">Upgrade
+                                    Your Kitchen Today!</h1>
+                                <p class="text-base sm:text-lg text-zinc-600 mb-6 leading-relaxed">
+                                    Discover premium cookware, utensils, and more. Shop now for quality and style!
+                                </p>
+                                <a href="/cookware"
+                                    class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-xl font-medium shadow-sm transition">
+                                    Shop Now
+                                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                                </a>
+                            </div>
+                            <div class="flex items-center justify-center w-full md:w-auto px-6 pb-8 md:pb-0 md:pr-8">
+                                <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                    alt="Wooden kitchen spoons and coffee pot"
+                                    class="w-52 h-52 sm:w-60 sm:h-60 object-contain drop-shadow-md">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- RIGHT SIDEBAR (1/4) -->
+                    <aside class="lg:col-span-1 flex flex-col gap-4">
+
+                        <div class="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
+
+                            <!-- HEADER -->
+                            <h2 class="bg-amber-500 text-white px-4 py-3 font-semibold tracking-wide">
+                                BESTSELLERS
+                            </h2>
+
+                            <!-- LIST -->
+                            <div class="divide-y divide-zinc-100">
+
+                                <!-- ITEM -->
+                                <div class="flex items-center gap-3 p-3 hover:bg-zinc-50 transition cursor-pointer">
+
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="Stainless steel cooking pot"
+                                        class="h-14 w-14 shrink-0 object-contain rounded-xl border border-zinc-100 bg-zinc-50 p-1">
+
+                                    <div class="flex-1 min-w-0">
+
+                                        <h4 class="text-sm font-medium text-zinc-800 truncate">
+                                            Stainless Steel Cooking Pot
+                                        </h4>
+
+                                        <p class="text-xs text-zinc-500 mt-1">
+                                            Durable cookware set
+                                        </p>
+
+                                        <p class="text-sm font-semibold text-amber-600 mt-1">
+                                            KES 4,999
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ITEM -->
+                                <div class="flex items-center gap-3 p-3 hover:bg-zinc-50 transition cursor-pointer">
+
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="Non-stick frying pan"
+                                        class="h-14 w-14 shrink-0 object-contain rounded-xl border border-zinc-100 bg-zinc-50 p-1">
+
+                                    <div class="flex-1 min-w-0">
+
+                                        <h4 class="text-sm font-medium text-zinc-800 truncate">
+                                            Non-Stick Frying Pan
+                                        </h4>
+
+                                        <p class="text-xs text-zinc-500 mt-1">
+                                            Healthy cooking essential
+                                        </p>
+
+                                        <p class="text-sm font-semibold text-amber-600 mt-1">
+                                            KES 3,500
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                <!-- ITEM -->
+                                <div class="flex items-center gap-3 p-3 hover:bg-zinc-50 transition cursor-pointer">
+
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="Chef knife set"
+                                        class="h-14 w-14 shrink-0 object-contain rounded-xl border border-zinc-100 bg-zinc-50 p-1">
+
+                                    <div class="flex-1 min-w-0">
+
+                                        <h4 class="text-sm font-medium text-zinc-800 truncate">
+                                            Chef Knife Set
+                                        </h4>
+
+                                        <p class="text-xs text-zinc-500 mt-1">
+                                            Precision cutting tools
+                                        </p>
+
+                                        <p class="text-sm font-semibold text-amber-600 mt-1">
+                                            KES 2,999
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="bg-white border border-zinc-100 rounded-xl p-5 shadow-sm">
+                            <h3 class="font-semibold text-zinc-800">Why Shop With Us?</h3>
+                            <ul class="text-sm text-zinc-600 mt-3 space-y-2.5">
+                                <li class="flex items-start gap-2"><i
+                                        class="fa-solid fa-check text-amber-500 mt-0.5 text-xs"></i> Premium quality
+                                    products</li>
+                                <li class="flex items-start gap-2"><i
+                                        class="fa-solid fa-check text-amber-500 mt-0.5 text-xs"></i> Fast delivery in
+                                    Kenya</li>
+                                <li class="flex items-start gap-2"><i
+                                        class="fa-solid fa-check text-amber-500 mt-0.5 text-xs"></i> Secure payments
+                                </li>
+                            </ul>
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </section>
+
+            <section class="py-10">
+
+                <!-- HEADER -->
+                <div class="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-zinc-800">
+                            Featured Kitchen Essentials
+                        </h2>
+                        <p class="text-sm text-zinc-500 mt-1">
+                            Premium cookware, utensils & tools for your kitchen
+                        </p>
+                    </div>
+                    <a href="/cookware" class="text-sm font-medium text-amber-600 hover:text-amber-700 transition">View
+                        all →</a>
+                </div>
+
+                <!-- PRODUCT GRID -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                    <!-- PRODUCT CARD -->
+                    <div
+                        class="group bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-amber-200/80 transition duration-300">
+
+                        <!-- IMAGE -->
+                        <div class="relative overflow-hidden bg-zinc-100">
+                            <img src="/images/set-kitchen-tools-frying-pan-black-textured-background-top-view.jpg"
+                                alt="Stainless steel cooking pot set"
+                                class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
+
+                            <span class="absolute top-3 left-3 bg-amber-500 text-white text-xs px-3 py-1 rounded-full">
+                                Best Seller
+                            </span>
+                        </div>
+
+                        <!-- CONTENT -->
+                        <div class="p-4">
+
+                            <h3 class="font-medium text-zinc-800">
+                                Stainless Steel Cooking Pot
+                            </h3>
+
+                            <p class="text-sm text-zinc-500 mt-1">
+                                Durable, heat-resistant and perfect for daily cooking.
+                            </p>
+
+                            <!-- PRICE + ACTION -->
+                            <div class="flex items-center justify-between mt-4">
+
+                                <div>
+                                    <p class="text-xs text-zinc-400 line-through">KES 6,000</p>
+                                    <p class="text-amber-600 font-semibold">KES 4,999</p>
+                                </div>
+
+                                <button type="button"
+                                    class="bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2 rounded-xl transition">
+                                    Add
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRODUCT CARD 2 -->
+                    <div
+                        class="group bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-amber-200/80 transition duration-300">
+
+                        <div class="relative overflow-hidden bg-zinc-100">
+                            <img src="/images/set-kitchen-tools-frying-pan-black-textured-background-top-view.jpg"
+                                alt="Non-stick frying pan"
+                                class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
+
+                            <span class="absolute top-3 left-3 bg-zinc-900 text-white text-xs px-3 py-1 rounded-full">
+                                New
+                            </span>
+                        </div>
+
+                        <div class="p-4">
+
+                            <h3 class="font-medium text-zinc-800">
+                                Non-Stick Frying Pan
+                            </h3>
+
+                            <p class="text-sm text-zinc-500 mt-1">
+                                Perfect for healthy cooking with less oil.
+                            </p>
+
+                            <div class="flex items-center justify-between mt-4">
+
+                                <div>
+                                    <p class="text-amber-600 font-semibold">KES 3,500</p>
+                                </div>
+
+                                <button type="button"
+                                    class="bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2 rounded-xl transition">
+                                    Add
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRODUCT CARD 3 -->
+                    <div
+                        class="group bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-amber-200/80 transition duration-300">
+
+                        <div class="relative overflow-hidden bg-zinc-100">
+                            <img src="/images/set-kitchen-tools-frying-pan-black-textured-background-top-view.jpg"
+                                alt="Chef kitchen knife"
+                                class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
+
+                            <span
+                                class="absolute top-3 left-3 bg-red-500 text-white text-xs font-medium px-3 py-1 rounded-full">
+                                -20%
+                            </span>
+                        </div>
+
+                        <div class="p-4">
+
+                            <h3 class="font-medium text-zinc-800">
+                                Chef’s Kitchen Knife
+                            </h3>
+
+                            <p class="text-sm text-zinc-500 mt-1">
+                                Razor sharp stainless steel blade for precision cutting.
+                            </p>
+
+                            <div class="flex items-center justify-between mt-4">
+
+                                <div>
+                                    <p class="text-xs text-zinc-400 line-through">KES 2,500</p>
+                                    <p class="text-amber-600 font-semibold">KES 1,999</p>
+                                </div>
+
+                                <button type="button"
+                                    class="bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2 rounded-xl transition">
+                                    Add
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRODUCT CARD 4 -->
+                    <div
+                        class="group bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-amber-200/80 transition duration-300">
+
+                        <div class="relative overflow-hidden bg-zinc-100">
+                            <img src="/images/set-kitchen-tools-frying-pan-black-textured-background-top-view.jpg"
+                                alt="Kitchen utensil set"
+                                class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
+
+                            <span
+                                class="absolute top-3 left-3 bg-zinc-900 text-white text-xs font-medium px-3 py-1 rounded-full">
+                                Popular
+                            </span>
+                        </div>
+
+                        <div class="p-4">
+
+                            <h3 class="font-medium text-zinc-800">
+                                12-Piece Utensil Set
+                            </h3>
+
+                            <p class="text-sm text-zinc-500 mt-1">
+                                Heat-resistant tools for everyday cooking and serving.
+                            </p>
+
+                            <div class="flex items-center justify-between mt-4">
+
+                                <div>
+                                    <p class="text-amber-600 font-semibold">KES 2,450</p>
+                                </div>
+
+                                <button type="button"
+                                    class="bg-amber-500 hover:bg-amber-600 text-white text-sm px-4 py-2 rounded-xl transition">
+                                    Add
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+            <section class="py-6 lg:py-8">
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+                    <!-- LEFT SIDEBAR (1/4) -->
+                    <aside class="lg:col-span-1 flex flex-col space-y-4">
+                        <div class="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
+                            <h2 class="bg-amber-500 text-white px-4 py-3 font-semibold tracking-wide">
+                                OUR SERVICES
+                            </h2>
+                            <ul class="divide-y divide-zinc-100 text-sm">
+                                <li class="flex items-center gap-3 p-4 hover:bg-zinc-50 transition">
+                                    <span
+                                        class="h-11 w-11 shrink-0 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                                        <i class="fa-solid fa-truck-fast"></i>
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-medium text-zinc-800">FREE SHIPPING</h4>
+                                        <p class="text-xs text-zinc-500 mt-1">For orders above KES 4,500</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-center gap-3 p-4 hover:bg-zinc-50 transition">
+                                    <span
+                                        class="h-11 w-11 shrink-0 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                                        <i class="fa-solid fa-headset"></i>
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-medium text-zinc-800">24/7 SUPPORT</h4>
+                                        <p class="text-xs text-zinc-500 mt-1">Offer support anytime</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-center gap-3 p-4 hover:bg-zinc-50 transition">
+                                    <span
+                                        class="h-11 w-11 shrink-0 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                                        <i class="fa-solid fa-hand-holding-dollar"></i>
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-medium text-zinc-800">CASH ON DELIVERY</h4>
+                                        <p class="text-xs text-zinc-500 mt-1">Pay upon seeing your goods</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-center gap-3 p-4 hover:bg-zinc-50 transition">
+                                    <span
+                                        class="h-11 w-11 shrink-0 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                                        <i class="fa-solid fa-ticket"></i>
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-medium text-zinc-800">SPECIAL COUPONS</h4>
+                                        <p class="text-xs text-zinc-500 mt-1">Receive coupons during happy hours</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </aside>
+
+                    <!-- MIDDLE CONTENT -->
+                    <div class="lg:col-span-2 w-full min-w-0">
+
+                        <div class="mb-4">
+                            <h2 class="text-xl font-semibold text-zinc-800">Special Offers</h2>
+                            <p class="text-sm text-zinc-500 mt-0.5">Limited-time savings on top picks</p>
+                        </div>
+                        <div
+                            class="relative overflow-hidden rounded-2xl bg-zinc-900 text-white border border-zinc-800 shadow-sm min-h-[280px] flex flex-col md:flex-row items-center gap-6 p-8">
+                            <div class="flex-1">
+                                <p class="text-xs uppercase tracking-[0.2em] text-amber-400 font-medium">This week only</p>
+                                <h2 class="text-2xl sm:text-3xl font-bold mt-2 leading-tight">Kitchen Essentials Sale
+                                </h2>
+                                <p class="text-sm text-zinc-400 mt-3 max-w-md leading-relaxed">
+                                    Save on cookware, knives, and utensil bundles before the timer runs out.
+                                </p>
+                                <a href="/offers"
+                                    class="inline-flex items-center gap-2 mt-6 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-xl transition">
+                                    Browse Offers
+                                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                                </a>
+                            </div>
+                            <div class="relative shrink-0 flex items-center justify-center">
+                                <img src="/images/male-chef-holding-wooden-kitchen-utensils-uniform-apron-hat-removebg-preview.png"
+                                    alt="Chef holding kitchen utensils"
+                                    class="w-48 sm:w-56 object-contain">
+                                <span class="absolute -top-1 -right-1 sm:right-0 h-16 w-16 rounded-full bg-amber-500 text-white text-sm font-bold flex items-center justify-center shadow-lg ring-4 ring-zinc-900">
+                                    50%<br><span class="text-[10px] font-semibold">OFF</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- RIGHT SIDEBAR (1/4) -->
+                    <aside class="lg:col-span-1">
+
+                        <div class="bg-white rounded-xl border border-zinc-100 shadow-sm overflow-hidden">
+                            <h2 class="bg-amber-500 text-white px-4 py-3 font-semibold tracking-wide">
+                                DEAL OF THE DAY
+                            </h2>
+                            <div class="p-4">
+                                <div class="flex justify-center bg-zinc-50 rounded-xl py-4">
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="Deal of the day product" class="w-40 h-40 object-contain">
+                                </div>
+                                <p class="text-center text-sm font-medium text-zinc-800 mt-3">Wooden Spoon Set</p>
+                                <p class="text-center text-amber-600 font-semibold">KES 1,299 <span
+                                        class="text-xs text-zinc-400 font-normal line-through ml-1">KES 1,899</span></p>
+
+                                <div class="deal-timer mt-4">
+                                    <div class="text-center">
+                                        <p class="text-xs uppercase tracking-widest text-amber-600 font-medium">
+                                            Sale ends in
+                                        </p>
+                                    </div>
+                                    <div class="flex gap-2 mt-3 justify-center">
+                                        <div
+                                            class="bg-zinc-900 text-white rounded-xl px-2.5 py-2 min-w-[52px] text-center">
+                                            <div id="days" class="text-lg font-bold tabular-nums">00</div>
+                                            <div class="text-[10px] text-zinc-400 uppercase">Days</div>
+                                        </div>
+                                        <div
+                                            class="bg-zinc-900 text-white rounded-xl px-2.5 py-2 min-w-[52px] text-center">
+                                            <div id="hours" class="text-lg font-bold tabular-nums">00</div>
+                                            <div class="text-[10px] text-zinc-400 uppercase">Hrs</div>
+                                        </div>
+                                        <div
+                                            class="bg-zinc-900 text-white rounded-xl px-2.5 py-2 min-w-[52px] text-center">
+                                            <div id="minutes" class="text-lg font-bold tabular-nums">00</div>
+                                            <div class="text-[10px] text-zinc-400 uppercase">Min</div>
+                                        </div>
+                                        <div
+                                            class="bg-amber-500 text-white rounded-xl px-2.5 py-2 min-w-[52px] text-center shadow-md shadow-amber-500/30">
+                                            <div id="seconds" class="text-lg font-bold tabular-nums">00</div>
+                                            <div class="text-[10px] uppercase opacity-90">Sec</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- customer feedbacks -->
+            <section class="py-12 lg:py-16">
+                <div class="relative overflow-hidden rounded-3xl border border-zinc-800/20 shadow-sm">
+                    <div class="absolute inset-0">
+                        <img src="/images/28991392865384.jpg" alt="" class="w-full h-full object-cover" aria-hidden="true">
+                        <div class="absolute inset-0 bg-zinc-950/70"></div>
+                    </div>
+                    <div class="relative z-10 p-8 md:p-12">
+                        <div class="text-center mb-10 md:mb-12">
+                            <span
+                                class="inline-block px-4 py-1 rounded-full bg-amber-500/15 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-4 border border-amber-500/20">
+                                Customer Reviews
+                            </span>
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+                                Loved by Home Chefs Across Kenya
+                            </h2>
+                            <p class="text-zinc-400 mt-3 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+                                Thousands of customers trust us for quality cookware,
+                                kitchen tools, and exceptional service.
+                            </p>
+                        </div>
+                        <!-- Testimonials -->
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <!-- Card -->
+                            <div
+                                class="bg-white/10 border border-white/10 rounded-2xl p-6 hover:bg-white/[0.12] transition duration-300">
+                                <div class="flex text-amber-400 mb-4">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-zinc-200 leading-relaxed">
+                                    "I love the quality of the cookware I bought.
+                                    It heats evenly and is incredibly easy to clean."
+                                </p>
+
+                                <div class="flex items-center gap-4 mt-6">
+
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="Sarah M."
+                                        class="h-12 w-12 rounded-full object-cover border-2 border-amber-400 bg-zinc-800">
+                                    <div>
+                                        <h4 class="font-semibold text-white">
+                                            Sarah M.
+                                        </h4>
+                                        <p class="text-sm text-zinc-400">
+                                            Verified Customer
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card -->
+                            <div
+                                class="bg-white/10 border border-white/10 rounded-2xl p-6 hover:bg-white/[0.12] transition duration-300">
+                                <div class="flex text-amber-400 mb-4">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-zinc-200 leading-relaxed">
+                                    "Fast delivery and excellent customer service.
+                                    My order arrived earlier than expected."
+                                </p>
+                                <div class="flex items-center gap-4 mt-6">
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="James K."
+                                        class="h-12 w-12 rounded-full object-cover border-2 border-amber-400 bg-zinc-800">
+                                    <div>
+                                        <h4 class="font-semibold text-white">
+                                            James K.
+                                        </h4>
+                                        <p class="text-sm text-zinc-400">
+                                            Verified Customer
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card -->
+                            <div
+                                class="bg-white/10 border border-white/10 rounded-2xl p-6 hover:bg-white/[0.12] transition duration-300">
+
+                                <div class="flex text-amber-400 mb-4">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star-half"></i>
+                                </div>
+                                <p class="text-zinc-200 leading-relaxed">
+                                    "The knife set I purchased is exceptional.
+                                    Sharp, balanced and built to last."
+                                </p>
+                                <div class="flex items-center gap-4 mt-6">
+                                    <img src="/images/half-shot-wooden-sapoons-empty-plastic-coffee-pot-dark-surface-removebg-preview.png"
+                                        alt="Emily R."
+                                        class="h-12 w-12 rounded-full object-cover border-2 border-amber-400 bg-zinc-800">
+                                    <div>
+                                        <h4 class="font-semibold text-white">
+                                            Emily R.
+                                        </h4>
+                                        <p class="text-sm text-zinc-400">
+                                            Verified Customer
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Bottom Stats -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10 md:mt-12 pt-8 border-t border-white/10 text-center">
+                            <div>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-amber-400 tabular-nums">5K+</h3>
+                                <p class="text-zinc-400 text-xs sm:text-sm mt-1">Happy Customers</p>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-amber-400 tabular-nums">1K+</h3>
+                                <p class="text-zinc-400 text-xs sm:text-sm mt-1">Products Sold</p>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-amber-400 tabular-nums">98%</h3>
+                                <p class="text-zinc-400 text-xs sm:text-sm mt-1">Positive Reviews</p>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-amber-400 tabular-nums">24/7</h3>
+                                <p class="text-zinc-400 text-xs sm:text-sm mt-1">Customer Support</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <%- include("../partials/footer.ejs") %>
+            <script>
+                const year = document.getElementById('year');
+                if (year) {
+                    year.textContent = new Date().getFullYear();
+                }
+                const dealEndDate = new Date("2026-06-10T23:59:59").getTime();
+                const wrapper = document.querySelector('.deal-timer');
+
+                function updateDealTimer() {
+                    const distance = dealEndDate - Date.now();
+
+                    if (distance < 0) {
+                        if (wrapper) {
+                            wrapper.innerHTML = '<div class="text-center py-4"><p class="text-sm font-semibold text-red-500">Deal expired</p></div>';
+                        }
+                        return false;
+                    }
+
+                    const daysEl = document.getElementById('days');
+                    const hoursEl = document.getElementById('hours');
+                    const minutesEl = document.getElementById('minutes');
+                    const secondsEl = document.getElementById('seconds');
+
+                    if (!daysEl || !hoursEl || !minutesEl || !secondsEl) return false;
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    daysEl.textContent = String(days).padStart(2, '0');
+                    hoursEl.textContent = String(hours).padStart(2, '0');
+                    minutesEl.textContent = String(minutes).padStart(2, '0');
+                    secondsEl.textContent = String(seconds).padStart(2, '0');
+                    return true;
+                }
+
+                if (updateDealTimer()) {
+                    const timer = setInterval(() => {
+                        if (!updateDealTimer()) clearInterval(timer);
+                    }, 1000);
+                }
+
+            </script>
+</body>
+
+</html>

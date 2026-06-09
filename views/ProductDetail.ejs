@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>
+        <%= utensil.name %> | KitchenStore
+    </title>
+    <meta name="description" content="<%= utensil.description %> — Shop premium kitchenware at KitchenStore.">
+</head>
+
+<body class="bg-zinc-50 antialiased font-[Inter,Poppins,sans-serif]">
+
+    <%- include("../partials/header.ejs") %>
+
+        <main>
+            <!-- =============== BREADCRUMB =============== -->
+            <section class="bg-white border-b border-zinc-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <nav class="flex items-center gap-2.5 text-sm" aria-label="Breadcrumb">
+                        <a href="/"
+                            class="text-zinc-400 hover:text-amber-600 transition-colors duration-200 flex items-center gap-1">
+                            <i class="fa-solid fa-house text-[11px]"></i> Home
+                        </a>
+                        <i class="fa-solid fa-chevron-right text-[0.6rem] text-zinc-300"></i>
+                        <a href="/all-utensils"
+                            class="text-zinc-400 hover:text-amber-600 transition-colors duration-200">Shop</a>
+                        <i class="fa-solid fa-chevron-right text-[0.6rem] text-zinc-300"></i>
+                        <a href="/all-utensils?category=<%= utensil.category_name %>"
+                            class="text-zinc-400 hover:text-amber-600 transition-colors duration-200 capitalize">
+                            <%= utensil.category_name %>
+                        </a>
+                        <i class="fa-solid fa-chevron-right text-[0.6rem] text-zinc-300"></i>
+                        <span class="text-zinc-800 font-medium truncate max-w-[200px]">
+                            <%= utensil.name %>
+                        </span>
+                    </nav>
+                </div>
+            </section>
+
+            <!-- =============== PRODUCT HERO =============== -->
+            <section class="bg-white py-10 md:py-14">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid lg:grid-cols-2 gap-10 xl:gap-16">
+
+                        <!-- LEFT: IMAGE GALLERY -->
+                        <div class="anim-fade-up">
+                            <!-- Main Image -->
+                            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-200 cursor-zoom-in group shadow-lg"
+                                id="mainImageWrap">
+                                <img id="mainImage" src="<%= utensil.image_url %>" alt="<%= utensil.name %>"
+                                    class="w-full h-[420px] md:h-[500px] object-cover transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-105">
+                                <!-- Zoom hint -->
+                                <div class="absolute top-4 right-4 bg-white/80 backdrop-blur-sm text-zinc-500 text-xs px-3 py-1.5 rounded-full flex items-center gap-1.5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                    id="zoomHint">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i> Click to zoom
+                                </div>
+                            </div>
+
+                            <!-- Thumbnails -->
+                            <div class="grid grid-cols-4 gap-3 mt-4">
+                                <% const thumbnails=utensil.images ? utensil.images : [utensil.image_url,
+                                    utensil.image_url, utensil.image_url, utensil.image_url]; for(let i=0; i < 4; i++) {
+                                    %>
+                                    <img src="<%= thumbnails[i] %>"
+                                        class="thumb-img w-full h-20 md:h-24 object-cover rounded-xl border-2 border-transparent cursor-pointer transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-amber-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-amber-100/50 anim-fade-up anim-delay-<%= i + 1 %>"
+                                        data-img="<%= thumbnails[i] %>" alt="<%= utensil.name %> view <%= i + 1 %>">
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: PRODUCT DETAILS -->
+                        <div>
+                            <!-- Category badge -->
+                            <span
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full anim-slide-right">
+                                <i class="fa-solid fa-tag text-[9px]"></i>
+                                <%= utensil.category_name %>
+                            </span>
+
+                            <!-- Title -->
+                            <h1
+                                class="text-3xl md:text-4xl lg:text-[2.65rem] font-bold text-zinc-900 mt-4 leading-tight anim-slide-right anim-delay-1">
+                                <%= utensil.name %>
+                            </h1>
+
+                            <!-- Rating -->
+                            <div class="flex items-center gap-3 mt-4 anim-slide-right anim-delay-2">
+                                <div class="flex text-amber-400 text-base gap-0.5">
+                                    <% const rating=utensil.rating || 4.8; %>
+                                        <% for(let i=1; i <=5; i++) { %>
+                                            <% if(i <=Math.floor(rating)) { %>
+                                                <i class="fas fa-star"></i>
+                                                <% } else if(i - rating < 1 && rating % 1 !==0) { %>
+                                                    <i class="fas fa-star-half-alt"></i>
+                                                    <% } else { %>
+                                                        <i class="far fa-star text-zinc-300"></i>
+                                                        <% } %>
+                                                            <% } %>
+                                </div>
+                                <span class="text-sm font-medium text-zinc-700">
+                                    <%= rating %>
+                                </span>
+                                <span class="text-zinc-300">|</span>
+                                <a href="#reviews-section"
+                                    class="text-sm text-amber-600 hover:text-amber-700 hover:underline transition">
+                                    <%= utensil.review_count || 245 %> reviews
+                                </a>
+                            </div>
+
+                            <!-- Price block -->
+                            <div class="flex items-end gap-4 mt-6 anim-slide-right anim-delay-3">
+                                <span class="text-3xl md:text-4xl font-extrabold text-zinc-900">
+                                    KES <%= Number(utensil.price).toLocaleString() %>
+                                </span>
+                                <% if(utensil.old_price) { %>
+                                    <span class="text-lg text-zinc-400 line-through font-medium mb-0.5">
+                                        KES <%= Number(utensil.old_price).toLocaleString() %>
+                                    </span>
+                                    <% } %>
+                                        <% if(utensil.badge) { %>
+                                            <span
+                                                class="anim-pulse-badge inline-flex items-center gap-1 bg-gradient-to-r from-red-500 to-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md mb-1">
+                                                <i class="fa-solid fa-bolt text-[9px]"></i>
+                                                <%= utensil.badge %>
+                                            </span>
+                                            <% } %>
+                            </div>
+
+                            <!-- Short description -->
+                            <p class="text-zinc-500 leading-relaxed mt-5 text-[0.95rem] anim-slide-right anim-delay-4">
+                                <%= utensil.description %>
+                            </p>
+
+                            <!-- Divider -->
+                            <div class="border-t border-zinc-100 my-7"></div>
+
+                            <!-- Material Selection -->
+                            <div class="anim-slide-right anim-delay-4">
+                                <div class="flex justify-between items-center mb-3">
+                                    <span
+                                        class="text-sm font-semibold text-zinc-800 uppercase tracking-wide">Material</span>
+                                    <a href="#" class="text-xs text-amber-600 hover:underline flex items-center gap-1">
+                                        <i class="fa-solid fa-ruler text-[10px]"></i> Size Guide
+                                    </a>
+                                </div>
+                                <div class="flex flex-wrap gap-2.5">
+                                    <% const materials=utensil.materials || ['Stainless Steel', 'Silicone' , 'Wood' ];
+                                        %>
+                                        <% materials.forEach(mat=> { %>
+                                            <button
+                                                class="option-pill px-5 py-2 border-[1.5px] border-zinc-200 rounded-full text-sm font-medium text-zinc-600 bg-transparent cursor-pointer transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-amber-500 hover:text-amber-800 hover:bg-amber-50 hover:-translate-y-px hover:shadow-md hover:shadow-amber-100/40 material-option">
+                                                <%= mat %>
+                                            </button>
+                                            <% }) %>
+                                </div>
+                            </div>
+
+                            <!-- Size Selection -->
+                            <div class="mt-6 anim-slide-right anim-delay-5">
+                                <span
+                                    class="text-sm font-semibold text-zinc-800 uppercase tracking-wide block mb-3">Size</span>
+                                <div class="flex flex-wrap gap-2.5">
+                                    <% const sizes=utensil.sizes || ['6 inch', '8 inch' , '10 inch' ]; %>
+                                        <% sizes.forEach(sz=> { %>
+                                            <button
+                                                class="option-pill px-5 py-2 border-[1.5px] border-zinc-200 rounded-full text-sm font-medium text-zinc-600 bg-transparent cursor-pointer transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:border-amber-500 hover:text-amber-800 hover:bg-amber-50 hover:-translate-y-px hover:shadow-md hover:shadow-amber-100/40 size-option">
+                                                <%= sz %>
+                                            </button>
+                                            <% }) %>
+                                </div>
+                            </div>
+
+                            <!-- Stock Status -->
+                            <div class="mt-7 flex flex-wrap items-center gap-4 anim-slide-right anim-delay-5">
+                                <% if(utensil.stock> 0) { %>
+                                    <span
+                                        class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium border border-emerald-100">
+                                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                        In Stock (<%= utensil.stock %>)
+                                    </span>
+                                    <% } else { %>
+                                        <span
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-full text-sm font-medium border border-red-100">
+                                            <span class="w-2 h-2 bg-red-500 rounded-full"></span>
+                                            Out of Stock
+                                        </span>
+                                        <% } %>
+                                            <span class="text-sm text-zinc-400">
+                                                SKU: <span class="font-mono text-zinc-500">UT-<%= utensil.id %></span>
+                                            </span>
+                            </div>
+
+                            <!-- Quantity + Action buttons -->
+                            <div class="flex flex-wrap items-center gap-3 mt-8 anim-slide-right anim-delay-6">
+                                <!-- Quantity Stepper -->
+                                <div
+                                    class="flex items-center border-[1.5px] border-zinc-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                                    <form action="/cart/decrease" method="POST">
+                                        <input type="hidden" name="id" value="<%= utensil.id %>">
+                                        <button type="submit"
+                                            class="qty-decr w-12 h-[3.25rem] flex items-center justify-center bg-transparent border-none cursor-pointer text-zinc-500 text-sm transition-colors duration-200 hover:bg-zinc-50 hover:text-amber-600"
+                                            aria-label="Decrease quantity">
+                                            <i class="fa-solid fa-minus text-xs"></i>
+                                        </button>
+                                    </form>
+                                    <input type="text" id="quantity" value="<%= cartQuantity %>"
+                                        readonly class="w-14 text-center border-none outline-none font-semibold text-base text-zinc-900 bg-transparent">
+                                    <form action="/cart/increase" method="POST">
+                                        <input type="hidden" name="id" value="<%= utensil.id %>">
+                                        <button type="submit"
+                                            class="qty-incr w-12 h-[3.25rem] flex items-center justify-center bg-transparent border-none cursor-pointer text-zinc-500 text-sm transition-colors duration-200 hover:bg-zinc-50 hover:text-amber-600"
+                                            aria-label="Increase quantity">
+                                            <i class="fa-solid fa-plus text-xs"></i>
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Add to Cart -->
+                                <form action="/cart/add" method="POST" class="inline" id="addToCartForm">
+                                    <input type="hidden" name="id" value="<%= utensil.id %>">
+                                    <input type="hidden" name="quantity" value="<%= cartQuantity %>" id="cartQtyInput">
+                                    <button type="submit" id="addToCartBtn"
+                                        class="inline-flex items-center gap-2 px-8 h-[3.25rem] bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold text-[0.95rem] rounded-xl border-none cursor-pointer shadow-lg shadow-amber-200/40 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:shadow-xl hover:shadow-amber-300/40 active:translate-y-0 active:shadow-md">
+                                        <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+
+                                <!-- Buy Now -->
+                                <form action="/cart/add" method="POST" class="inline" id="buyNowForm">
+                                    <input type="hidden" name="id" value="<%= utensil.id %>">
+                                    <input type="hidden" name="quantity" value="<%= cartQuantity %>" id="buyNowQtyInput">
+                                    <input type="hidden" name="redirect" value="/checkout">
+                                    <button type="submit" id="buyNowBtn"
+                                        class="inline-flex items-center gap-2 px-8 h-[3.25rem] bg-zinc-900 text-white font-semibold text-[0.95rem] rounded-xl border-none cursor-pointer shadow-lg shadow-zinc-200/60 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:bg-zinc-800 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-zinc-300/50 active:translate-y-0">
+                                        <i class="fa-solid fa-bolt"></i> Buy Now
+                                    </button>
+                                </form>
+
+                                <!-- Wishlist -->
+                                <button id="wishlistBtn" aria-label="Add to wishlist"
+                                    class="w-[3.25rem] h-[3.25rem] rounded-xl border-[1.5px] border-zinc-200 bg-white cursor-pointer inline-flex items-center justify-center text-zinc-400 text-lg transition-all duration-300 hover:border-red-400 hover:text-red-500 hover:bg-red-50 hover:-translate-y-0.5">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+
+                            <!-- Tags & Share -->
+                            <div class="border-t border-zinc-100 mt-9 pt-6">
+                                <div class="flex flex-wrap gap-y-4">
+                                    <!-- Tags -->
+                                    <div class="flex flex-wrap gap-2 items-center mr-auto">
+                                        <span class="text-sm font-semibold text-zinc-700 mr-1">Tags:</span>
+                                        <% const tags=utensil.tags || ['Utensil', 'Kitchen' , 'Chef' , 'Cooking' ]; %>
+                                            <% tags.forEach(tag=> { %>
+                                                <a href="#"
+                                                    class="bg-zinc-100 text-zinc-500 text-xs font-medium px-3 py-1 rounded-full hover:bg-amber-50 hover:text-amber-700 transition-all duration-200">
+                                                    #<%= tag %>
+                                                </a>
+                                                <% }) %>
+                                    </div>
+
+                                    <!-- Share -->
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-sm font-semibold text-zinc-700">Share:</span>
+                                        <div class="flex gap-2">
+                                            <a href="#"
+                                                class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-blue-600 hover:text-white transition-all duration-200 text-sm">
+                                                <i class="fab fa-facebook-f"></i>
+                                            </a>
+                                            <a href="#"
+                                                class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-sky-500 hover:text-white transition-all duration-200 text-sm">
+                                                <i class="fab fa-twitter"></i>
+                                            </a>
+                                            <a href="#"
+                                                class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-pink-500 hover:text-white transition-all duration-200 text-sm">
+                                                <i class="fab fa-instagram"></i>
+                                            </a>
+                                            <a href="#"
+                                                class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:bg-green-500 hover:text-white transition-all duration-200 text-sm">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============== TRUST BADGES STRIP =============== -->
+            <section class="bg-white border-t border-zinc-100 py-8">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div
+                            class="flex items-center gap-4 p-5 rounded-xl bg-zinc-50 border border-zinc-100 transition-all duration-300 hover:bg-amber-50/60 hover:border-amber-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-amber-100/30">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-truck-fast text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-800">Free Delivery</p>
+                                <p class="text-xs text-zinc-400">Orders over KES 5,000</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-5 rounded-xl bg-zinc-50 border border-zinc-100 transition-all duration-300 hover:bg-emerald-50/60 hover:border-emerald-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-emerald-100/30">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-shield-halved text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-800">1 Year Warranty</p>
+                                <p class="text-xs text-zinc-400">Quality guaranteed</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-5 rounded-xl bg-zinc-50 border border-zinc-100 transition-all duration-300 hover:bg-blue-50/60 hover:border-blue-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-blue-100/30">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-rotate-left text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-800">Easy Returns</p>
+                                <p class="text-xs text-zinc-400">30-day return policy</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center gap-4 p-5 rounded-xl bg-zinc-50 border border-zinc-100 transition-all duration-300 hover:bg-violet-50/60 hover:border-violet-200 hover:-translate-y-0.5 hover:shadow-md hover:shadow-violet-100/30">
+                            <div
+                                class="w-11 h-11 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center shrink-0">
+                                <i class="fa-solid fa-headset text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-800">24/7 Support</p>
+                                <p class="text-xs text-zinc-400">Chat & phone support</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =============== TABS SECTION =============== -->
+            <section class="bg-zinc-50 py-10 md:py-14" id="reviews-section">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <!-- Tab Container -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden">
+                        <!-- Tab Buttons -->
+                        <div class="flex flex-wrap gap-8 px-6 md:px-8 pt-6 border-b border-zinc-100">
+                            <button
+                                class="tab-btn relative pb-4 text-zinc-400 font-semibold cursor-pointer bg-transparent border-none transition-colors duration-250 hover:text-amber-700"
+                                data-tab="desc">
+                                <i class="fa-solid fa-file-lines mr-1.5 text-xs"></i> Description
+                            </button>
+                            <button
+                                class="tab-btn relative pb-4 text-zinc-400 font-semibold cursor-pointer bg-transparent border-none transition-colors duration-250 hover:text-amber-700"
+                                data-tab="specs">
+                                <i class="fa-solid fa-list-check mr-1.5 text-xs"></i> Specifications
+                            </button>
+                            <button
+                                class="tab-btn relative pb-4 text-zinc-400 font-semibold cursor-pointer bg-transparent border-none transition-colors duration-250 hover:text-amber-700"
+                                data-tab="reviews">
+                                <i class="fa-solid fa-star mr-1.5 text-xs"></i> Reviews (<%= utensil.review_count || 107
+                                    %>)
+                            </button>
+                        </div>
+
+                        <div class="p-6 md:p-8">
+                            <!-- TAB: Description -->
+                            <div id="desc" class="tab-content anim-tab-slide">
+                                <div class="grid md:grid-cols-[1fr_300px] gap-8">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-zinc-800 mb-4">About this product</h3>
+                                        <p class="text-zinc-500 leading-relaxed text-[0.95rem]">
+                                            <%= utensil.long_description || utensil.description
+                                                + " This premium utensil is crafted from high-quality materials, ensuring durability and perfect ergonomics for daily kitchen tasks. Whether you're a professional chef or a home cook, this tool will elevate your cooking experience."
+                                                %>
+                                        </p>
+                                        <div class="grid grid-cols-2 gap-4 mt-8">
+                                            <div class="flex items-start gap-3 p-4 bg-amber-50/50 rounded-xl">
+                                                <i class="fa-solid fa-gem text-amber-500 mt-0.5"></i>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-zinc-800">Premium Materials</p>
+                                                    <p class="text-xs text-zinc-400 mt-0.5">Crafted from the finest
+                                                        materials</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start gap-3 p-4 bg-emerald-50/50 rounded-xl">
+                                                <i class="fa-solid fa-hand-sparkles text-emerald-500 mt-0.5"></i>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-zinc-800">Ergonomic Design</p>
+                                                    <p class="text-xs text-zinc-400 mt-0.5">Comfortable and balanced
+                                                        grip
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start gap-3 p-4 bg-blue-50/50 rounded-xl">
+                                                <i class="fa-solid fa-droplet-slash text-blue-500 mt-0.5"></i>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-zinc-800">Easy to Clean</p>
+                                                    <p class="text-xs text-zinc-400 mt-0.5">Dishwasher safe design</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start gap-3 p-4 bg-violet-50/50 rounded-xl">
+                                                <i class="fa-solid fa-infinity text-violet-500 mt-0.5"></i>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-zinc-800">Built to Last</p>
+                                                    <p class="text-xs text-zinc-400 mt-0.5">Durable & long-lasting
+                                                        quality
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Side rating summary -->
+                                    <div
+                                        class="bg-gradient-to-b from-amber-50 to-orange-50/30 rounded-xl p-6 text-center border border-amber-100/50 self-start">
+                                        <div class="text-4xl font-extrabold text-zinc-800">
+                                            <%= utensil.rating || 4.8 %>
+                                        </div>
+                                        <div class="flex justify-center text-amber-400 my-2 gap-0.5">
+                                            <% for(let i=0; i < 5; i++) { %><i class="fas fa-star"></i>
+                                                <% } %>
+                                        </div>
+                                        <p class="text-zinc-500 text-sm">Based on <%= utensil.review_count || 245 %>
+                                                reviews</p>
+                                        <a href="#reviews-section"
+                                            class="inline-flex items-center gap-1.5 mt-4 text-sm font-semibold text-amber-600 hover:text-amber-700 transition">
+                                            Read all reviews <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TAB: Specifications -->
+                            <div id="specs" class="tab-content hidden anim-tab-slide">
+                                <h3 class="text-xl font-bold text-zinc-800 mb-6">Product Specifications</h3>
+                                <table class="w-full text-left">
+                                    <tbody>
+                                        <tr
+                                            class="border-b border-zinc-100 transition-colors duration-200 hover:bg-zinc-50">
+                                            <th class="py-4 pr-4 w-1/3 text-sm font-semibold text-zinc-700">
+                                                <i class="fa-solid fa-layer-group text-amber-500 mr-2 text-xs"></i>
+                                                Material
+                                            </th>
+                                            <td class="py-4 text-sm text-zinc-600">
+                                                <%= utensil.material || "High-carbon stainless steel" %>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            class="border-b border-zinc-100 transition-colors duration-200 hover:bg-zinc-50">
+                                            <th class="py-4 pr-4 text-sm font-semibold text-zinc-700">
+                                                <i class="fa-solid fa-ruler text-amber-500 mr-2 text-xs"></i> Blade
+                                                Length
+                                            </th>
+                                            <td class="py-4 text-sm text-zinc-600">
+                                                <%= (utensil.sizes && utensil.sizes[0]) || "8 inch" %>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            class="border-b border-zinc-100 transition-colors duration-200 hover:bg-zinc-50">
+                                            <th class="py-4 pr-4 text-sm font-semibold text-zinc-700">
+                                                <i class="fa-solid fa-hand text-amber-500 mr-2 text-xs"></i> Handle
+                                                Material
+                                            </th>
+                                            <td class="py-4 text-sm text-zinc-600">Ergonomic ABS / Natural Wood</td>
+                                        </tr>
+                                        <tr
+                                            class="border-b border-zinc-100 transition-colors duration-200 hover:bg-zinc-50">
+                                            <th class="py-4 pr-4 text-sm font-semibold text-zinc-700">
+                                                <i class="fa-solid fa-droplet text-amber-500 mr-2 text-xs"></i>
+                                                Dishwasher
+                                                Safe
+                                            </th>
+                                            <td class="py-4 text-sm text-zinc-600">Yes (hand wash recommended)</td>
+                                        </tr>
+                                        <tr
+                                            class="border-b border-zinc-100 transition-colors duration-200 hover:bg-zinc-50">
+                                            <th class="py-4 pr-4 text-sm font-semibold text-zinc-700">
+                                                <i class="fa-solid fa-weight-hanging text-amber-500 mr-2 text-xs"></i>
+                                                Weight
+                                            </th>
+                                            <td class="py-4 text-sm text-zinc-600">
+                                                <%= utensil.weight || "280g" %>
+                                            </td>
+                                        </tr>
+                                        <tr class="transition-colors duration-200 hover:bg-zinc-50">
+                                            <th class="py-4 pr-4 text-sm font-semibold text-zinc-700">
+                                                <i class="fa-solid fa-globe text-amber-500 mr-2 text-xs"></i> Origin
+                                            </th>
+                                            <td class="py-4 text-sm text-zinc-600">Imported</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- TAB: Reviews -->
+                            <div id="reviews" class="tab-content hidden anim-tab-slide">
+                                <!-- Rating Summary -->
+                                <div class="grid md:grid-cols-[280px_1fr] gap-8 mb-10">
+                                    <!-- Big score -->
+                                    <div
+                                        class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-2xl p-8 text-center border border-amber-100/50">
+                                        <div class="text-5xl font-extrabold text-zinc-800">
+                                            <%= utensil.rating || 4.8 %>
+                                        </div>
+                                        <div class="flex justify-center text-amber-400 my-3 gap-0.5 text-lg">
+                                            <% for(let i=0; i < 5; i++) { %><i class="fas fa-star"></i>
+                                                <% } %>
+                                        </div>
+                                        <p class="text-zinc-500 text-sm font-medium">
+                                            Based on <span class="text-zinc-700">
+                                                <%= utensil.review_count || 245 %>
+                                            </span>
+                                            reviews
+                                        </p>
+                                    </div>
+
+                                    <!-- Rating bars -->
+                                    <div class="flex flex-col justify-center gap-3">
+                                        <% const ratingData=[{stars: 5, pct: 70}, {stars: 4, pct: 20}, {stars: 3, pct:
+                                            5}, {stars: 2, pct: 3}, {stars: 1, pct: 2}]; %>
+                                            <% ratingData.forEach(r=> { %>
+                                                <div class="flex items-center gap-3">
+                                                    <span
+                                                        class="text-sm font-medium text-zinc-600 w-14 flex items-center gap-1">
+                                                        <%= r.stars %> <i
+                                                                class="fas fa-star text-amber-400 text-[10px]"></i>
+                                                    </span>
+                                                    <div class="flex-1 bg-zinc-100 rounded-full h-2.5 overflow-hidden">
+                                                        <div class="anim-progress-fill bg-gradient-to-r from-amber-400 to-amber-500 h-2.5 rounded-full"
+                                                            style="width: <%= r.pct %>%; animation-delay: <%= r.stars * 0.1 %>s;">
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-xs font-medium text-zinc-400 w-10 text-right">
+                                                        <%= r.pct %>%
+                                                    </span>
+                                                </div>
+                                                <% }) %>
+                                    </div>
+                                </div>
+
+                                <!-- Reviews Header -->
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="font-bold text-xl text-zinc-800">Customer Reviews</h3>
+                                    <button
+                                        class="text-sm font-semibold text-amber-600 hover:text-amber-700 flex items-center gap-1.5 transition cursor-pointer bg-transparent border-none">
+                                        <i class="fa-solid fa-pen-to-square text-xs"></i> Write a Review
+                                    </button>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <!-- Review 1 -->
+                                    <div
+                                        class="bg-white border border-zinc-100 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-200 hover:shadow-lg hover:shadow-zinc-100/50 hover:-translate-y-0.5">
+                                        <div class="flex items-start gap-4">
+                                            <div
+                                                class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
+                                                KW</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                                    <div>
+                                                        <span class="font-semibold text-zinc-800">Kristin Watson</span>
+                                                        <span
+                                                            class="ml-2 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <i class="fa-solid fa-circle-check text-[8px]"></i> Verified
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-xs text-zinc-400">1 month ago</span>
+                                                </div>
+                                                <div class="flex text-amber-400 text-sm my-2 gap-0.5">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i>
+                                                </div>
+                                                <p class="text-zinc-500 text-sm leading-relaxed">
+                                                    Love it! This chef knife is incredibly sharp and well-balanced.
+                                                    Exactly
+                                                    what I was looking for.
+                                                    The handle feels great in hand and the quality is outstanding for
+                                                    the
+                                                    price.
+                                                </p>
+                                                <div class="flex items-center gap-4 mt-3">
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-amber-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-thumbs-up"></i> Helpful (12)
+                                                    </button>
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-zinc-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-flag"></i> Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review 2 -->
+                                    <div
+                                        class="bg-white border border-zinc-100 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-200 hover:shadow-lg hover:shadow-zinc-100/50 hover:-translate-y-0.5">
+                                        <div class="flex items-start gap-4">
+                                            <div
+                                                class="w-11 h-11 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
+                                                BC</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                                    <div>
+                                                        <span class="font-semibold text-zinc-800">Bessie Cooper</span>
+                                                        <span
+                                                            class="ml-2 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <i class="fa-solid fa-circle-check text-[8px]"></i> Verified
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-xs text-zinc-400">2 months ago</span>
+                                                </div>
+                                                <div class="flex text-amber-400 text-sm my-2 gap-0.5">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i>
+                                                </div>
+                                                <p class="text-zinc-500 text-sm leading-relaxed">
+                                                    Excellent product! The ergonomic handle makes it comfortable for
+                                                    long
+                                                    prep sessions.
+                                                    Highly recommend to anyone upgrading their kitchen tools.
+                                                </p>
+                                                <div class="flex items-center gap-4 mt-3">
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-amber-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-thumbs-up"></i> Helpful (8)
+                                                    </button>
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-zinc-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-flag"></i> Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review 3 -->
+                                    <div
+                                        class="bg-white border border-zinc-100 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-200 hover:shadow-lg hover:shadow-zinc-100/50 hover:-translate-y-0.5">
+                                        <div class="flex items-start gap-4">
+                                            <div
+                                                class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
+                                                JM</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                                    <div>
+                                                        <span class="font-semibold text-zinc-800">James Mwangi</span>
+                                                        <span
+                                                            class="ml-2 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <i class="fa-solid fa-circle-check text-[8px]"></i> Verified
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-xs text-zinc-400">3 months ago</span>
+                                                </div>
+                                                <div class="flex text-amber-400 text-sm my-2 gap-0.5">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="far fa-star text-zinc-300"></i>
+                                                </div>
+                                                <p class="text-zinc-500 text-sm leading-relaxed">
+                                                    Great utensil overall. Very solid build quality and arrived
+                                                    well-packaged.
+                                                    Only giving 4 stars because the delivery took a bit longer than
+                                                    expected, but the product itself is top-notch.
+                                                </p>
+                                                <div class="flex items-center gap-4 mt-3">
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-amber-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-thumbs-up"></i> Helpful (5)
+                                                    </button>
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-zinc-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-flag"></i> Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Load more -->
+                                <div class="text-center mt-8">
+                                    <button
+                                        class="inline-flex items-center gap-2 px-6 py-3 border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-600 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50/50 transition-all duration-200 cursor-pointer bg-transparent">
+                                        <i class="fa-solid fa-arrow-rotate-right text-xs"></i> Load More Reviews
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <%- include("../partials/footer.ejs") %>
+
+            <!-- =============== LIGHTBOX =============== -->
+            <div class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[1000] hidden place-items-center cursor-zoom-out anim-fade-in"
+                id="lightbox">
+                <button
+                    class="absolute top-6 right-6 text-white/70 hover:text-white text-2xl transition z-10 bg-transparent border-none cursor-pointer"
+                    id="closeLightbox">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img id="lightboxImg" src="" alt="Zoomed product image"
+                    class="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl anim-scale-in">
+            </div>
+
+            <script>
+                // ========== TAB SWITCHING ==========
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                const tabContents = document.querySelectorAll('.tab-content');
+
+                tabBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tabId = btn.getAttribute('data-tab');
+                        // Hide all tabs
+                        tabContents.forEach(c => c.classList.add('hidden'));
+                        // Show selected tab
+                        const target = document.getElementById(tabId);
+                        target.classList.remove('hidden');
+                        // Remove active from all buttons
+                        tabBtns.forEach(b => {
+                            b.classList.remove('text-amber-700', 'border-b-[2.5px]', 'border-amber-500');
+                            b.classList.add('text-zinc-400');
+                        });
+                        // Activate clicked button
+                        btn.classList.remove('text-zinc-400');
+                        btn.classList.add('text-amber-700', 'border-b-[2.5px]', 'border-amber-500');
+                    });
+                });
+                // Activate first tab by default
+                if (tabBtns.length) tabBtns[0].click();
+
+                // ========== THUMBNAIL GALLERY ==========
+                const mainImg = document.getElementById('mainImage');
+                const thumbs = document.querySelectorAll('.thumb-img');
+                mainImg.style.transition = 'opacity 0.25s ease';
+
+                thumbs.forEach(thumb => {
+                    thumb.addEventListener('click', () => {
+                        mainImg.style.opacity = '0';
+                        setTimeout(() => {
+                            mainImg.src = thumb.getAttribute('data-img');
+                            mainImg.style.opacity = '1';
+                        }, 200);
+                        thumbs.forEach(t => {
+                            t.classList.remove('border-amber-500', 'shadow-lg', 'shadow-amber-200/50');
+                            t.classList.add('border-transparent');
+                        });
+                        thumb.classList.remove('border-transparent');
+                        thumb.classList.add('border-amber-500', 'shadow-lg', 'shadow-amber-200/50');
+                    });
+                });
+                if (thumbs.length) {
+                    thumbs[0].classList.remove('border-transparent');
+                    thumbs[0].classList.add('border-amber-500', 'shadow-lg', 'shadow-amber-200/50');
+                }
+
+                // ========== LIGHTBOX ==========
+                const lightbox = document.getElementById('lightbox');
+                const lightboxImg = document.getElementById('lightboxImg');
+                const mainWrap = document.getElementById('mainImageWrap');
+                const closeLB = document.getElementById('closeLightbox');
+
+                mainWrap.addEventListener('click', () => {
+                    lightboxImg.src = mainImg.src;
+                    lightbox.classList.remove('hidden');
+                    lightbox.style.display = 'grid';
+                    document.body.style.overflow = 'hidden';
+                });
+                function closeLightboxFn() {
+                    lightbox.style.display = 'none';
+                    lightbox.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox || e.target === closeLB || closeLB.contains(e.target)) closeLightboxFn();
+                });
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightboxFn(); });
+
+                // ========== OPTION PILLS ==========
+                document.querySelectorAll('.option-pill').forEach(opt => {
+                    opt.addEventListener('click', function () {
+                        const siblings = this.parentElement.querySelectorAll('button');
+                        siblings.forEach(s => {
+                            s.classList.remove('bg-gradient-to-r', 'from-amber-500', 'to-amber-600', 'text-white', 'border-transparent', 'shadow-lg', 'shadow-amber-200/40', '-translate-y-px');
+                            s.classList.add('border-zinc-200', 'text-zinc-600', 'bg-transparent');
+                        });
+                        this.classList.remove('border-zinc-200', 'text-zinc-600', 'bg-transparent');
+                        this.classList.add('bg-gradient-to-r', 'from-amber-500', 'to-amber-600', 'text-white', 'border-transparent', 'shadow-lg', 'shadow-amber-200/40', '-translate-y-px');
+                    });
+                });
+
+                // ========== QUANTITY ==========
+                const qtyInput = document.getElementById('quantity');
+                const cartQtyInput = document.getElementById('cartQtyInput');
+                const buyNowQtyInput = document.getElementById('buyNowQtyInput');
+                const maxStock = <%= utensil.stock %> || 99;
+
+                function syncQty() {
+                    const val = qtyInput.value;
+                    if (cartQtyInput) cartQtyInput.value = val;
+                    if (buyNowQtyInput) buyNowQtyInput.value = val;
+                }
+
+                document.querySelector('.qty-decr')?.addEventListener('click', () => {
+                    let v = parseInt(qtyInput.value);
+                    if (v > 1) {
+                        qtyInput.value = v - 1;
+                        syncQty();
+                    }
+                });
+                document.querySelector('.qty-incr')?.addEventListener('click', () => {
+                    let v = parseInt(qtyInput.value);
+                    if (v < maxStock) {
+                        qtyInput.value = v + 1;
+                        syncQty();
+                    }
+                });
+
+                // ========== WISHLIST TOGGLE ==========
+                const wishBtn = document.getElementById('wishlistBtn');
+                wishBtn?.addEventListener('click', () => {
+                    const icon = wishBtn.querySelector('i');
+                    const isActive = icon.classList.contains('fa-solid');
+                    if (isActive) {
+                        icon.classList.replace('fa-solid', 'fa-regular');
+                        wishBtn.classList.remove('border-red-400', 'text-red-500', 'bg-red-50');
+                        wishBtn.classList.add('border-zinc-200', 'text-zinc-400', 'bg-white');
+                    } else {
+                        icon.classList.replace('fa-regular', 'fa-solid');
+                        wishBtn.classList.remove('border-zinc-200', 'text-zinc-400', 'bg-white');
+                        wishBtn.classList.add('border-red-400', 'text-red-500', 'bg-red-50');
+                    }
+                });
+            </script>
+
+</body>
+
+</html>

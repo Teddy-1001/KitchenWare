@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>All Utensils — KitchenStore</title>
+</head>
+
+<body>
+    <%- include("../partials/header.ejs") %>
+
+        <!-- Page Banner -->
+        <section class="bg-white border-b border-zinc-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+                <div class="text-center max-w-2xl mx-auto">
+                    <span
+                        class="inline-block px-3.5 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-semibold uppercase tracking-wider mb-4">
+                        Shop Collection
+                    </span>
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-zinc-900 tracking-tight">
+                        All Kitchen Utensils
+                    </h1>
+                    <p class="mt-4 text-zinc-600 text-sm sm:text-base leading-relaxed">
+                        Discover premium utensils designed to make cooking easier,
+                        faster, and more enjoyable.
+                    </p>
+                    <nav class="flex items-center justify-center gap-2 mt-5 text-sm text-zinc-500"
+                        aria-label="Breadcrumb">
+                        <a href="/" class="hover:text-amber-600 transition">Home</a>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-zinc-400" aria-hidden="true"></i>
+                        <span class="text-zinc-800 font-medium capitalize">
+                            <% if (category) { %>
+                                <%= category %> Utensils
+                                    <% } else { %>
+                                        All Utensils
+                                        <% } %>
+                        </span>
+                    </nav>
+                </div>
+            </div>
+        </section>
+
+        <!-- utensils grid -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
+                <p class="text-sm text-zinc-500">
+                    Showing <span class="font-semibold text-zinc-800">
+                        <%= utensils.length %>
+                    </span>
+                    <%= utensils.length===1 ? 'product' : 'products' %>
+                </p>
+                <p class="text-xs text-zinc-400 uppercase tracking-wider font-medium">
+                    Premium Kitchenware
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <% utensils.forEach(utensil=> { %>
+                    <%- include("../partials/utensilCard.ejs", { utensil }) %>
+                        <% }) %>
+            </div>
+        </main>
+
+        <%- include("../partials/footer.ejs") %>
+
+            <script>
+                const year = document.getElementById('year');
+                if (year) year.textContent = new Date().getFullYear();
+            </script>
+</body>
+
+</html>

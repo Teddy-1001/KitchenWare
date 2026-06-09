@@ -1,0 +1,188 @@
+<header class="bg-zinc-950 text-white sticky top-0 z-50 shadow-lg border-b border-white/5">
+
+    <!-- MAIN HEADER -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="h-24 flex items-center justify-between gap-6">
+
+            <!-- BRAND -->
+            <a href="/" class="flex items-center gap-3">
+
+                <img src="/images/Untitled_design-removebg-preview.png" class="h-14 md:h-16 w-auto object-contain">
+
+                <div class="">
+                    <h1 class="text-xl font-semibold tracking-wide">KitchenStore</h1>
+                    <p class="text-xs uppercase tracking-[0.25em] text-amber-400">
+                        Premium Kitchenware
+                    </p>
+                </div>
+
+            </a>
+
+            <!-- SEARCH (DESKTOP) -->
+            <div class="hidden md:flex flex-1 max-w-2xl">
+
+                <div
+                    class="w-full flex items-center bg-white rounded-full overflow-hidden border border-zinc-200 shadow-md">
+
+                    <input type="text" placeholder="Search cookware, utensils, knives..."
+                        class="flex-1 px-5 py-3 text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-0">
+
+                    <button type="button" aria-label="Search"
+                        class="bg-amber-500 hover:bg-amber-600 px-6 py-3 transition">
+                        <i class="fa-solid fa-magnifying-glass text-white"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="flex items-center gap-3">
+
+                <!-- CART -->
+                <button type="button"
+                    class="flex items-center gap-3 px-4 py-2 rounded-2xl border border-white/10 hover:border-amber-500/40 hover:bg-white/5 transition">
+
+                    <div class="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center relative">
+                        <i class="fa-solid fa-cart-shopping text-amber-400"></i>
+                        <div class="relative rounded-full w-6 h-6  bottom-4 bg-amber-600 text-white text-sm">
+                            <p><%= cart ? cart.length : 0 %></p>
+                        </div>
+                    </div>
+
+                    <a href="/cart" class="hidden sm:block text-left">
+                        <p class="text-sm font-medium">Cart</p>
+                        <p class="text-xs text-zinc-400">KES <%= grandTotal.toLocaleString() %></p>
+                    </a>
+
+                </button>
+
+                <!-- MOBILE MENU -->
+                <button type="button" id="mobileMenuBtn" aria-label="Open menu"
+                    class="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-white/5 transition">
+
+                    <i class="fa-solid fa-bars text-lg"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MOBILE SEARCH -->
+    <div class="md:hidden px-4 pb-4">
+
+        <div class="flex items-center bg-white rounded-full overflow-hidden">
+
+            <input type="text" placeholder="Search products..."
+                class="flex-1 px-4 py-3 text-zinc-800 focus:outline-none">
+
+            <button class="bg-amber-500 px-5 py-3">
+                <i class="fa-solid fa-magnifying-glass text-white"></i>
+            </button>
+
+        </div>
+
+    </div>
+    <!-- Desktop navigation (hidden on mobile) -->
+    <div class="hidden md:block bg-amber-600 border-t border-amber-700/40">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between">
+            <ul class="flex flex-wrap gap-1 py-3 text-sm font-medium">
+                <li><a href="/all-utensils"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">All
+                        Utensils</a></li>
+                <li><a href="/cookware"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Cookware</a>
+                </li>
+                <li><a href="/knives"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Knives</a>
+                </li>
+                <li><a href="/storage"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Storage</a>
+                </li>
+                <li><a href="/dining"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Dining</a>
+                </li>
+                <li><a href="/offers"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Special
+                        Offers</a></li>
+            </ul>
+            <% if (user) { %>
+                <p>Welcome <%= user.name %>
+                </p>
+                <% } else { %>
+                    <button >Login</button>
+                    <% } %>
+        </div>
+    </div>
+
+</header>
+
+<!-- OVERLAY -->
+<div id="mobileOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden"></div>
+
+<!-- MOBILE DRAWER -->
+<div id="mobileNavDrawer"
+    class="fixed top-0 right-0 h-full w-80 max-w-[90vw] bg-zinc-950 border-l border-white/10 z-50 translate-x-full transition-transform duration-300 md:hidden">
+
+    <div class="h-20 flex items-center justify-between px-5 border-b border-white/10">
+
+        <div>
+
+            <h3 class="font-semibold text-white pb-2">KitchenStore</h3>
+            <p class="text-xs text-amber-400 uppercase tracking-wider">
+                Premium Kitchenware
+            </p>
+        </div>
+
+        <button id="closeMobileMenu">
+            <i class="fa-solid fa-xmark text-xl text-amber-400"></i>
+        </button>
+
+    </div>
+
+    <div class="p-5 items-center justify-center">
+        <ul class="space-y-2 text-sm">
+            <li><a href="/all-utensils" class="block px-4 py-3 text-amber-400 ">All Utensils</a></li>
+            <li><a href="/cookware" class="block px-4 py-3 text-amber-400 ">Cookware</a></li>
+            <li><a href="/knives" class="block px-4 py-3 text-amber-400 ">Knives</a></li>
+            <li><a href="/storage" class="block px-4 py-3 text-amber-400 ">Storage</a></li>
+            <li><a href="/dining" class="block px-4 py-3 text-amber-400 ">Dining</a></li>
+            <li><a href="/offers" class="block px-4 py-3 text-amber-400">Special Offers</a></li>
+
+        </ul>
+        <% if (user) { %>
+            <p>Welcome <%= user.name %>
+            </p>
+            <% } else { %>
+                <button>Login</button>
+                <% } %>
+
+    </div>
+
+</div>
+
+<!-- JS -->
+<script>
+    const btn = document.getElementById('mobileMenuBtn');
+    const drawer = document.getElementById('mobileNavDrawer');
+    const overlay = document.getElementById('mobileOverlay');
+    const closeBtn = document.getElementById('closeMobileMenu');
+
+    function openMenu() {
+        drawer.classList.remove('translate-x-full');
+        overlay.classList.remove('hidden');
+    }
+
+    function closeMenu() {
+        drawer.classList.add('translate-x-full');
+        overlay.classList.add('hidden');
+    }
+
+    btn?.addEventListener('click', openMenu);
+    closeBtn?.addEventListener('click', closeMenu);
+    overlay?.addEventListener('click', closeMenu);
+</script>

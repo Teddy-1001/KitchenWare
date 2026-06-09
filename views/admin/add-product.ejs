@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- Tailwind + Google Fonts + Font Awesome (stable) -->
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Admin — Add New Product | Kitchenware</title>
+    <style>
+        /* custom smooth transitions & micro interactions */
+        body {
+            transition: background 0.2s ease;
+        }
+        .card-hover {
+            transition: all 0.25s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+        }
+        .dropzone-active {
+            border-color: #f59e0b !important;
+            background-color: #fffbeb !important;
+            transition: all 0.2s;
+        }
+        .file-preview-enter {
+            animation: fadeScale 0.2s ease-out;
+        }
+        @keyframes fadeScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        input, select, textarea {
+            transition: all 0.2s ease;
+        }
+        .btn-submit {
+            background: linear-gradient(105deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+        }
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.3);
+        }
+        .focus-ring-custom:focus {
+            outline: none;
+            ring: 2px solid #f59e0b;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-zinc-50 to-zinc-100/60 antialiased font-['Inter',system-ui,sans-serif]">
+
+    <%- include("../../partials/header.ejs") %>
+
+    <main>
+        <!-- =============== BREADCRUMB =============== -->
+        <section class="bg-white/80 backdrop-blur-sm border-b border-zinc-200/70 sticky top-0 z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                    <a href="/admin" class="text-zinc-500 hover:text-amber-600 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-gauge-high text-xs"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <i class="fa-solid fa-chevron-right text-[0.65rem] text-zinc-400"></i>
+                    <a href="/admin/products" class="text-zinc-500 hover:text-amber-600 transition">Products</a>
+                    <i class="fa-solid fa-chevron-right text-[0.65rem] text-zinc-400"></i>
+                    <span class="text-amber-700 font-semibold flex items-center gap-1.5">
+                        <i class="fa-regular fa-square-plus text-sm"></i>
+                        Add new product
+                    </span>
+                </nav>
+            </div>
+        </section>
+
+        <!-- MAIN FORM (multipart) -->
+        <form action="/admin/products" method="POST" enctype="multipart/form-data" id="productForm" class="block">
+            <section class="py-10 md:py-14">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    
+                    <!-- page header with badge & gradient line -->
+                    <div class="mb-8 md:mb-10 relative">
+                        <div class="flex items-center gap-3 flex-wrap justify-between">
+                            <div>
+                                <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-800 text-sm font-medium shadow-sm">
+                                    <i class="fa-regular fa-pen-to-square text-xs"></i>
+                                    Admin panel
+                                </span>
+                                <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 mt-4 flex items-center gap-2">
+                                    Add new product
+                                    <span class="text-amber-500 text-4xl">✦</span>
+                                </h1>
+                                <p class="text-zinc-500 mt-2 max-w-2xl text-base">
+                                    Fill in the product details. High-quality images help boost conversion.
+                                </p>
+                            </div>
+                            <div class="hidden md:flex items-center gap-2 text-sm bg-white/70 px-4 py-2 rounded-full shadow-sm border border-zinc-200">
+                                <i class="fa-regular fa-clock text-amber-500"></i>
+                                <span class="text-zinc-600">All changes are saved instantly</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-3 left-0 w-24 h-1 bg-amber-400 rounded-full"></div>
+                    </div>
+                    
+                    <!-- 2 COLUMN GRID (improved) -->
+                    <div class="grid lg:grid-cols-2 gap-8 xl:gap-12">
+                        
+                        <!-- LEFT COLUMN: Image Gallery + Category -->
+                        <div class="space-y-7">
+                            <!-- UPLOAD ZONE (modern dropzone style) -->
+                            <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden transition-all card-hover">
+                                <div class="p-6 border-b border-zinc-100 bg-zinc-50/40">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fa-regular fa-image text-amber-500 text-xl"></i>
+                                        <h2 class="text-xl font-bold text-zinc-800">Product media</h2>
+                                        <span class="text-xs bg-zinc-200/80 text-zinc-600 px-2 py-0.5 rounded-full ml-2">Primary image</span>
+                                    </div>
+                                    <p class="text-zinc-400 text-sm mt-1">JPEG, PNG, WEBP up to 5MB. First image is main thumbnail.</p>
+                                </div>
+                                <div class="p-6">
+                                    <!-- custom file upload with preview -->
+                                    <div id="dropzone" 
+                                         class="relative border-2 border-dashed border-zinc-300 rounded-xl bg-zinc-50/50 transition-all hover:border-amber-400 cursor-pointer group overflow-hidden"
+                                         style="min-height: 280px;">
+                                        <input type="file" name="image" id="productImageInput" accept="image/jpeg,image/png,image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                        <div id="uploadPlaceholder" class="flex flex-col items-center justify-center py-12 text-center pointer-events-none">
+                                            <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-amber-200 transition">
+                                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-amber-600"></i>
+                                            </div>
+                                            <h3 class="font-semibold text-zinc-800 text-lg">Drop image or click to browse</h3>
+                                            <p class="text-zinc-400 text-sm mt-1.5 max-w-xs">Recommended size: 1200 x 1200 px</p>
+                                            <span class="mt-4 text-xs bg-white px-3 py-1.5 rounded-full shadow-sm text-zinc-600 border">PNG, JPG, WEBP up to 5MB</span>
+                                        </div>
+                                        <div id="imagePreviewContainer" class="hidden p-4 bg-white/80 backdrop-blur-sm">
+                                            <div class="relative rounded-lg overflow-hidden bg-zinc-100 flex justify-center items-center" style="min-height: 220px;">
+                                                <img id="imagePreview" class="max-h-56 object-contain" src="#" alt="Preview">
+                                                <button type="button" id="removeImageBtn" class="absolute top-3 right-3 bg-white/90 backdrop-blur rounded-full w-8 h-8 flex items-center justify-center shadow-md text-red-500 hover:bg-red-50 transition">
+                                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                                </button>
+                                            </div>
+                                            <p class="text-xs text-zinc-500 mt-2 text-center"><i class="fa-regular fa-check-circle text-green-500"></i> Image ready</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-zinc-400 mt-3 flex items-center gap-1.5">
+                                        <i class="fa-regular fa-circle-info"></i> 
+                                        You can change the image later. Maximum file size 5 MB.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- CATEGORY CARD (improved) -->
+                            <div class="bg-white border border-zinc-200 rounded-2xl shadow-sm card-hover">
+                                <div class="p-6">
+                                    <div class="flex items-center gap-2 mb-5">
+                                        <i class="fa-regular fa-folder-tree text-amber-500 text-lg"></i>
+                                        <h2 class="text-xl font-bold text-zinc-800">Product category</h2>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-sm font-semibold text-zinc-700 flex items-center gap-1">
+                                            Category <span class="text-red-500">*</span>
+                                        </label>
+                                        <select name="category_id" required class="w-full px-4 py-3 border border-zinc-200 rounded-xl bg-white focus:ring-4 focus:ring-amber-100 focus:border-amber-400 transition capitalize appearance-none">
+                                            <option value="" disabled selected>— Select a category —</option>
+                                            <% categories.forEach(category=> { %>
+                                                <option value="<%= category.id %>" class="capitalize"><%= category.name %></option>
+                                            <% }) %>
+                                        </select>
+                                        <p class="text-xs text-zinc-400 mt-1">Choose the right group for better visibility.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- quick tip block (extra UI charm) -->
+                            <div class="bg-gradient-to-r from-amber-50 to-transparent rounded-xl border border-amber-100 p-4 flex gap-3 items-start">
+                                <i class="fa-regular fa-lightbulb text-amber-600 text-lg mt-0.5"></i>
+                                <div class="text-sm">
+                                    <span class="font-semibold text-amber-800">Pro tip:</span>
+                                    <span class="text-zinc-600"> Use a clear, descriptive product name and high-resolution image to increase clicks by up to 40%.</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- RIGHT COLUMN: General & Pricing details -->
+                        <div class="space-y-7">
+                            <!-- GENERAL INFORMATION CARD -->
+                            <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm card-hover">
+                                <div class="p-6">
+                                    <div class="flex items-center gap-2 mb-6">
+                                        <i class="fa-regular fa-pen-to-square text-amber-500 text-xl"></i>
+                                        <h2 class="text-xl font-bold text-zinc-800">General information</h2>
+                                    </div>
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-700 mb-1.5">
+                                                Product name <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" name="name" required 
+                                                   class="w-full px-4 py-3 border border-zinc-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition"
+                                                   placeholder="e.g., Professional Nonstick Frying Pan 28cm">
+                                            <p class="text-zinc-400 text-xs mt-1.5 flex items-center gap-1">
+                                                <i class="fa-regular fa-message"></i> Unique & descriptive — helps customers find it easily.
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-700 mb-1.5">
+                                                Description
+                                            </label>
+                                            <textarea name="description" rows="4" 
+                                                      class="w-full px-4 py-3 border border-zinc-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition resize-none"
+                                                      placeholder="Describe the product features, materials, dimensions, care instructions..."></textarea>
+                                            <div class="flex justify-end text-xs text-zinc-400 mt-1">
+                                                <span id="charCount">0</span>/1000 characters
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- PRICING & INVENTORY CARD (combined) -->
+                            <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm card-hover">
+                                <div class="p-6">
+                                    <div class="flex items-center gap-2 mb-6">
+                                        <i class="fa-regular fa-tag text-amber-500 text-xl"></i>
+                                        <h2 class="text-xl font-bold text-zinc-800">Pricing & stock</h2>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-5">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-700 mb-1.5">
+                                                Price (KES) <span class="text-red-500">*</span>
+                                            </label>
+                                            <div class="relative">
+                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">KSh</span>
+                                                <input type="number" step="0.01" name="price" required 
+                                                       class="w-full pl-12 pr-4 py-3 border border-zinc-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition"
+                                                       placeholder="0.00">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-700 mb-1.5">
+                                                Old price (KES)
+                                            </label>
+                                            <div class="relative">
+                                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400">KSh</span>
+                                                <input type="number" step="0.01" name="old_price" 
+                                                       class="w-full pl-12 pr-4 py-3 border border-zinc-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition"
+                                                       placeholder="0.00">
+                                            </div>
+                                            <p class="text-xs text-zinc-400 mt-1">Leave empty if no discount</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-700 mb-1.5">
+                                                Stock quantity <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="number" name="stock" min="0" value="0" required
+                                                   class="w-full px-4 py-3 border border-zinc-200 rounded-xl focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-zinc-700 mb-1.5">
+                                                Badge
+                                            </label>
+                                            <div class="relative">
+                                                <select name="badge" class="w-full px-4 py-3 border border-zinc-200 rounded-xl appearance-none bg-white focus:ring-4 focus:ring-amber-100">
+                                                    <option value="">None</option>
+                                                    <option value="New">✨ New</option>
+                                                    <option value="Best Seller">🏆 Best Seller</option>
+                                                    <option value="Hot">🔥 Hot</option>
+                                                    <option value="Eco">🌿 Eco Friendly</option>
+                                                </select>
+                                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none text-sm"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-5 pt-2 border-t border-zinc-100 text-xs text-zinc-500 flex gap-3">
+                                        <span class="flex items-center gap-1"><i class="fa-regular fa-circle-check text-emerald-500"></i> Tax included</span>
+                                        <span class="flex items-center gap-1"><i class="fa-regular fa-clock"></i> Real-time inventory</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- additional meta / subtle info (optional) -->
+                            <div class="flex items-center justify-between bg-white/70 rounded-xl p-3 text-sm text-zinc-500 border border-zinc-200/80">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-regular fa-shield-check text-amber-500"></i>
+                                    <span>All product data is encrypted & secure</span>
+                                </div>
+                                <i class="fa-regular fa-arrow-right text-zinc-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ACTION BUTTONS (floating-style at bottom) -->
+                    <div class="flex flex-wrap justify-end gap-4 mt-12 pt-4 border-t border-zinc-200/70">
+                        <a href="/admin/products" 
+                           class="px-6 py-3 rounded-xl border border-zinc-300 bg-white text-zinc-700 font-medium hover:bg-zinc-50 transition shadow-sm flex items-center gap-2">
+                            <i class="fa-regular fa-circle-xmark"></i> Cancel
+                        </a>
+                        <button type="submit" 
+                                class="px-8 py-3 bg-amber-500 text-white font-semibold rounded-xl btn-submit transition duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
+                            <i class="fa-regular fa-floppy-disk"></i> Publish product
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </main>
+
+    <script>
+        (function() {
+            // 1. Image preview with drag & drop styling + remove
+            const fileInput = document.getElementById('productImageInput');
+            const dropzone = document.getElementById('dropzone');
+            const placeholderDiv = document.getElementById('uploadPlaceholder');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewImg = document.getElementById('imagePreview');
+            const removeBtn = document.getElementById('removeImageBtn');
+            
+            function showPreview(file) {
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        placeholderDiv.classList.add('hidden');
+                        previewContainer.classList.remove('hidden');
+                        previewContainer.classList.add('file-preview-enter');
+                    };
+                    reader.readAsDataURL(file);
+                } else if(file) {
+                    alert('Please select a valid image file (JPEG, PNG, WEBP).');
+                    fileInput.value = '';
+                }
+            }
+            
+            function resetPreview() {
+                placeholderDiv.classList.remove('hidden');
+                previewContainer.classList.add('hidden');
+                previewImg.src = '#';
+                fileInput.value = '';
+            }
+            
+            if(fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    if (this.files && this.files[0]) {
+                        // validate size 5MB
+                        if (this.files[0].size > 5 * 1024 * 1024) {
+                            alert('Image too large! Maximum size is 5MB.');
+                            fileInput.value = '';
+                            resetPreview();
+                            return;
+                        }
+                        showPreview(this.files[0]);
+                    } else {
+                        resetPreview();
+                    }
+                });
+                
+                // remove button functionality
+                if(removeBtn) {
+                    removeBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        resetPreview();
+                    });
+                }
+                
+                // Drag & drop enhancement
+                if(dropzone) {
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        dropzone.addEventListener(eventName, preventDefaults, false);
+                    });
+                    function preventDefaults(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        dropzone.addEventListener(eventName, highlight, false);
+                    });
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        dropzone.addEventListener(eventName, unhighlight, false);
+                    });
+                    function highlight() {
+                        dropzone.classList.add('dropzone-active');
+                    }
+                    function unhighlight() {
+                        dropzone.classList.remove('dropzone-active');
+                    }
+                    dropzone.addEventListener('drop', handleDrop, false);
+                    function handleDrop(e) {
+                        const dt = e.dataTransfer;
+                        const files = dt.files;
+                        if (files && files[0]) {
+                            if (files[0].size > 5 * 1024 * 1024) {
+                                alert('File too large (max 5MB)');
+                                return;
+                            }
+                            fileInput.files = files;
+                            showPreview(files[0]);
+                        }
+                    }
+                }
+            }
+            
+            // 2. Character counter for description textarea
+            const descriptionField = document.querySelector('textarea[name="description"]');
+            const charSpan = document.getElementById('charCount');
+            if(descriptionField && charSpan) {
+                const maxLength = 1000;
+                const updateCount = () => {
+                    const len = descriptionField.value.length;
+                    charSpan.innerText = len;
+                    if(len > maxLength) {
+                        descriptionField.value = descriptionField.value.substring(0, maxLength);
+                        charSpan.innerText = maxLength;
+                    }
+                };
+                descriptionField.addEventListener('input', updateCount);
+                updateCount();
+            }
+            
+            // 3. Smart stock validation (non-negative)
+            const stockInput = document.querySelector('input[name="stock"]');
+            if(stockInput) {
+                stockInput.addEventListener('change', function() {
+                    if(this.value < 0) this.value = 0;
+                });
+            }
+            
+            // 4. old price / price visual hint (optional side effect)
+            const priceInput = document.querySelector('input[name="price"]');
+            const oldPriceInput = document.querySelector('input[name="old_price"]');
+            if(priceInput && oldPriceInput) {
+                function validateDiscount() {
+                    const price = parseFloat(priceInput.value);
+                    const oldPrice = parseFloat(oldPriceInput.value);
+                    if(!isNaN(price) && !isNaN(oldPrice) && oldPrice < price && oldPrice > 0) {
+                        oldPriceInput.style.borderColor = '#f59e0b';
+                        // subtle tooltip visual effect
+                        let tooltip = document.getElementById('price-warning');
+                        if(!tooltip) {
+                            tooltip = document.createElement('p');
+                            tooltip.id = 'price-warning';
+                            tooltip.className = 'text-xs text-amber-600 mt-1';
+                            oldPriceInput.parentNode.appendChild(tooltip);
+                        }
+                        tooltip.innerText = '⚠️ Old price should be higher than current price for discount display.';
+                    } else if(!isNaN(price) && !isNaN(oldPrice) && oldPrice > price && oldPrice > 0) {
+                        oldPriceInput.style.borderColor = '#10b981';
+                        let tooltip = document.getElementById('price-warning');
+                        if(tooltip) tooltip.innerText = '✓ Discount will be shown on storefront.';
+                    } else {
+                        oldPriceInput.style.borderColor = '';
+                        let tooltip = document.getElementById('price-warning');
+                        if(tooltip) tooltip.innerText = '';
+                    }
+                }
+                priceInput.addEventListener('input', validateDiscount);
+                oldPriceInput.addEventListener('input', validateDiscount);
+            }
+            
+            // 5. additional UX: form submit protection: ensure required fields not empty + custom validation for image if desired (optional)
+            const form = document.getElementById('productForm');
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    const catSelect = document.querySelector('select[name="category_id"]');
+                    const productName = document.querySelector('input[name="name"]');
+                    const priceVal = document.querySelector('input[name="price"]');
+                    const stockVal = document.querySelector('input[name="stock"]');
+                    if(!catSelect.value) {
+                        e.preventDefault();
+                        alert('Please select a product category.');
+                        catSelect.focus();
+                        return;
+                    }
+                    if(!productName.value.trim()) {
+                        e.preventDefault();
+                        alert('Product name is required.');
+                        productName.focus();
+                        return;
+                    }
+                    if(!priceVal.value || parseFloat(priceVal.value) < 0) {
+                        e.preventDefault();
+                        alert('Please enter a valid price (KES).');
+                        priceVal.focus();
+                        return;
+                    }
+                    if(stockVal.value === '' || parseInt(stockVal.value) < 0) {
+                        e.preventDefault();
+                        alert('Stock quantity must be a non-negative number.');
+                        stockVal.focus();
+                        return;
+                    }
+                    // if file input not required, but if user wants to submit without image, we allow (editing later)
+                    // just ensure no size error.
+                    if(fileInput.files.length > 0 && fileInput.files[0].size > 5 * 1024 * 1024) {
+                        e.preventDefault();
+                        alert('Image exceeds 5MB, please choose a smaller image.');
+                        return;
+                    }
+                });
+            }
+            
+            // add small micro: show current category hint
+            const categorySelect = document.querySelector('select[name="category_id"]');
+            if(categorySelect && categorySelect.options.length <= 1) {
+                // if no dynamic categories placeholder, could be server side, but we leave as is.
+            }
+            
+            // extra: when price/old price change, auto apply styles for badge suggestion? just prettier
+        })();
+    </script>
+    <!-- any additional inline style for better brand -->
+</body>
+</html>

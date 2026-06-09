@@ -1,0 +1,55 @@
+<!-- utensil card -->
+<article
+    class="group bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-amber-200/80 transition duration-300">
+
+    <div class="relative overflow-hidden bg-zinc-100">
+        <a href="/utensil/<%= utensil.id %>">
+           <% if (utensil.badge) { let badgeClass='bg-amber-500' ; if (String(utensil.badge).includes('%'))
+            badgeClass='bg-red-500' ; else if (utensil.badge==='New' ) badgeClass='bg-zinc-900' ; %>
+            <span
+                class="absolute top-3 left-3 z-10 <%= badgeClass %> text-white text-xs font-medium px-3 py-1 rounded-full">
+                <%= utensil.badge %>
+            </span>
+            <% } %>
+
+                <button type="button" aria-label="Add <%= utensil.name %> to wishlist"
+                    class="absolute top-3 right-3 z-10 h-9 w-9 flex items-center justify-center bg-white/95 text-zinc-500 hover:text-red-500 rounded-full border border-zinc-200/80 shadow-sm transition">
+                    <i class="fa-regular fa-heart text-sm"></i>
+                </button>
+
+                <img src="<%= utensil.image_url %>" alt="<%= utensil.name %>"
+                    class="w-full h-56 sm:h-60 object-cover object-center group-hover:scale-105 transition duration-500"> 
+        </a>
+        
+        
+    </div>
+
+    <div class="p-4">
+        <h3 class="font-semibold text-zinc-900 leading-snug truncate">
+            <%= utensil.name %>
+        </h3>
+        <p class="text-sm text-zinc-500 mt-1 line-clamp-2 min-h-[2.5rem]">
+            <%= utensil.description %>
+        </p>
+
+        <div class="flex items-center justify-between gap-3 mt-4 pt-4 border-t border-zinc-100">
+            <div class="min-w-0">
+                <% if (utensil.oldPrice) { %>
+                    <p class="text-xs text-zinc-400 line-through">KES <%= utensil.oldPrice.toLocaleString() %>
+                    </p>
+                    <% } %>
+                        <p class="text-base font-bold text-amber-600 tabular-nums">
+                            KES <%= utensil.price.toLocaleString() %>
+                        </p>
+            </div>
+            <form action="/cart/add" method="post">
+                <input type="hidden" name="id" value="<%= utensil.id %>">
+                <button type="submit"
+                    class="shrink-0 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium px-4 py-2 rounded-xl transition">
+                    Add to Cart
+                </button>
+            </form>
+
+        </div>
+    </div>
+</article>

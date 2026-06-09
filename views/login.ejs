@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Google Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <title>KitchenWare | Welcome Back</title>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .auth-gradient {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .input-with-icon {
+            padding-left: 3.5rem !important;
+        }
+
+        .icon-container {
+            width: 3.5rem;
+        }
+
+        .input-focus-effect:focus {
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-zinc-50 antialiased">
+
+    <div class="flex min-h-screen">
+
+        <!-- LEFT SIDE: Brand & Aesthetic -->
+        <div class="hidden lg:flex w-1/2 auth-gradient relative overflow-hidden items-center justify-center">
+
+            <!-- Abstract Decorative Elements -->
+            <div
+                class="absolute w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px] -top-40 -left-40 animate-pulse">
+            </div>
+            <div class="absolute w-[400px] h-[400px] bg-black/5 rounded-full blur-[80px] bottom-0 right-0"></div>
+
+            <div class="relative z-10 flex flex-col items-center p-12 text-white w-full max-w-xl">
+
+                <!-- Logo with subtle float animation -->
+                <div class="mb-12 transition-transform hover:scale-105 duration-500">
+                    <img src="/images/Untitled_design-removebg-preview.png" alt="KitchenStore Logo"
+                        class="w-24 h-24 object-contain drop-shadow-2xl">
+                </div>
+
+                <!-- Content -->
+                <div class="text-center">
+                    <h1 class="text-6xl font-bold leading-tight tracking-tight">
+                        Elevate Your <br> <span class="text-zinc-900/90">Culinary Experience</span>
+                    </h1>
+
+                    <p class="text-lg text-white/90 mt-6 font-light leading-relaxed">
+                        Join thousands of professional chefs and home cooks who trust KitchenWare for premium
+                        essentials.
+                    </p>
+
+                    <div class="mt-12 flex items-center justify-center gap-4">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-amber-500 bg-zinc-200"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-amber-500 bg-zinc-300"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-amber-500 bg-zinc-400"></div>
+                        </div>
+                        <p class="text-sm font-medium text-white/80">Trusted by 10k+ cooks</p>
+                    </div>
+                </div>
+
+                <!-- Bottom indicators -->
+                <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-2">
+                    <div class="w-8 h-1.5 bg-white rounded-full"></div>
+                    <div class="w-2 h-1.5 bg-white/40 rounded-full"></div>
+                    <div class="w-2 h-1.5 bg-white/40 rounded-full"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: Login Form -->
+        <div class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-12">
+
+            <div class="w-full max-w-md">
+
+                <!-- Mobile Logo -->
+                <div class="lg:hidden flex justify-center mb-8">
+                    <img src="/images/Untitled_design-removebg-preview.png" alt="Logo" class="h-16 w-auto">
+                </div>
+
+                <!-- Header -->
+                <div class="mb-10">
+                    <h2 class="text-4xl font-bold text-zinc-900 tracking-tight">
+                        Sign In
+                    </h2>
+                    <p class="text-zinc-500 mt-3 font-light">
+                        Welcome back! Access your professional kitchen tools.
+                    </p>
+                </div>
+
+                <!-- Social Login Section -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <button
+                        class="flex items-center justify-center gap-3 px-4 py-3 border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-all duration-200 group">
+                        <i class="fa-brands fa-google text-red-500 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm font-medium text-zinc-700">Google</span>
+                    </button>
+                    <button
+                        class="flex items-center justify-center gap-3 px-4 py-3 border border-zinc-200 rounded-xl hover:bg-zinc-50 transition-all duration-200 group">
+                        <i class="fa-brands fa-apple text-zinc-900 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm font-medium text-zinc-700">Apple</span>
+                    </button>
+                </div>
+
+                <div class="relative flex items-center mb-8">
+                    <div class="flex-grow border-t border-zinc-200"></div>
+                    <span class="flex-shrink mx-4 text-zinc-400 text-xs uppercase tracking-widest font-semibold">Or with
+                        email</span>
+                    <div class="flex-grow border-t border-zinc-200"></div>
+                </div>
+
+                <!-- Form -->
+                <form action="/login" method="POST" class="space-y-6">
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-zinc-700 ml-1">Email Address</label>
+                        <div class="relative group">
+                            <span
+                                class="absolute inset-y-0 left-0 flex items-center justify-center icon-container text-zinc-400 group-focus-within:text-amber-500 transition-colors">
+                                <i class="fa-regular fa-envelope"></i>
+                            </span>
+                            <input type="email" name="email" required
+                                class="w-full pr-4 py-3.5 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-0 focus:border-amber-500 transition-all input-focus-effect"
+                                style="padding-left: 3.5rem !important;" placeholder="name@example.com">
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center px-1">
+                            <label class="text-sm font-semibold text-zinc-700">Password</label>
+                            <a href="#"
+                                class="text-xs font-semibold text-amber-600 hover:text-amber-700 transition">Forgot
+                                Password?</a>
+                        </div>
+                        <div class="relative group">
+                            <span
+                                class="absolute inset-y-0 left-0 flex items-center justify-center icon-container text-zinc-400 group-focus-within:text-amber-500 transition-colors">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <input type="password" name="password" required
+                                class="w-full pr-4 py-3.5 bg-white border border-zinc-200 rounded-xl focus:outline-none focus:ring-0 focus:border-amber-500 transition-all input-focus-effect"
+                                style="padding-left: 3.5rem !important;" placeholder="••••••••">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember"
+                            class="w-4 h-4 text-amber-500 border-zinc-300 rounded focus:ring-amber-500 accent-amber-500 cursor-pointer">
+                        <label for="remember" class="ml-2 block text-sm text-zinc-600 cursor-pointer select-none">
+                            Keep me signed in
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-zinc-900 hover:bg-zinc-800 active:scale-[0.98] text-white py-4 rounded-xl font-bold tracking-wide shadow-xl shadow-zinc-200 transition-all duration-200">
+                        Sign In to KitchenWare
+                    </button>
+
+                </form>
+
+                <!-- Footer -->
+                <p class="text-center text-zinc-500 mt-10 font-light">
+                    New to our store?
+                    <a href="/register" class="text-amber-600 font-bold hover:text-amber-700 transition">
+                        Create an account
+                    </a>
+                </p>
+
+                <!-- Legal -->
+                <p class="text-center text-[10px] text-zinc-400 mt-12 uppercase tracking-widest">
+                    Secure 256-bit SSL encrypted connection
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Include Toastr Partial -->
+    <%- include('../partials/toastr') %>
+
+</body>
+
+</html>

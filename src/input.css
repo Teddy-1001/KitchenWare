@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    @apply antialiased bg-zinc-50 text-zinc-800;
+  }
+}
+
+@layer components {
+  .flash-track {
+    display: flex;
+    width: max-content;
+    animation: flash-marquee 65s linear infinite;
+  }
+
+  .flash-track:hover {
+    animation-play-state: paused;
+  }
+}
+
+/* ============= PRODUCT DETAIL ANIMATIONS ============= */
+@keyframes flash-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tabSlide {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes progressFill {
+  from { width: 0; }
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
+
+/* ============= PRODUCT DETAIL UTILITIES ============= */
+@utility anim-fade-up {
+  animation: fadeUp 0.6s cubic-bezier(.22,1,.36,1) both;
+}
+@utility anim-fade-in {
+  animation: fadeIn 0.5s ease both;
+}
+@utility anim-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(.22,1,.36,1) both;
+}
+@utility anim-slide-right {
+  animation: slideInRight 0.6s cubic-bezier(.22,1,.36,1) both;
+}
+@utility anim-tab-slide {
+  animation: tabSlide 0.35s ease-out both;
+}
+@utility anim-progress-fill {
+  animation: progressFill 0.8s cubic-bezier(.22,1,.36,1) both;
+}
+@utility anim-pulse-badge {
+  animation: pulseBadge 2s ease-in-out infinite;
+}
+@utility anim-delay-1 {
+  animation-delay: 0.08s;
+}
+@utility anim-delay-2 {
+  animation-delay: 0.16s;
+}
+@utility anim-delay-3 {
+  animation-delay: 0.24s;
+}
+@utility anim-delay-4 {
+  animation-delay: 0.32s;
+}
+@utility anim-delay-5 {
+  animation-delay: 0.4s;
+}
+@utility anim-delay-6 {
+  animation-delay: 0.48s;
+}

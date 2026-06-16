@@ -9,6 +9,9 @@ import session from 'express-session';
 import { admin } from './middleware/admin.js';
 import axios from 'axios';
 import { stkPush } from './public/js/mpesa_push.js';
+import upload from './middleware/upload.js';
+import cloudinary from './db/cloudinary.js';
+import fs from 'fs/promises';
 
 dotenv.config();
 const app = express();
@@ -50,7 +53,11 @@ const clearCart = (req, res) => {
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(express.urlencoded({
+    extended: true
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
@@ -244,7 +251,10 @@ app.post('/register', async (req, res) => {
     }
 })
 
-app.get('/login', (req, res) => {
+app.get('/login', async (req, res) => {
+    const hash = await bcrypt.hash("12345678", 10);
+
+    console.log(hash);
     res.render('login');
 })
 app.post('/login', async (req, res) => {
@@ -263,7 +273,8 @@ app.post('/login', async (req, res) => {
         }
 
         const user = result.rows[0];
-
+        // console.log(password);
+        // console.log(user.password);
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -294,6 +305,16 @@ app.post('/login', async (req, res) => {
         });
     }
 });
+
+app.post('/logout', (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict'
+    });
+
+    res.redirect('/login');
+})
 //add to cart
 app.post('/cart/add', async (req, res) => {
     const { id, quantity, redirect } = req.body
@@ -530,8 +551,8 @@ app.post('/checkout/place-order', async (req, res) => {
             total, 
             delivery_address, 
             phone, 
-            payment_method, payment_status)
-            VALUES ($1,$2,$3,$4,$5,$6,$7, 'unpaid')
+            payment_method, payment_status, notes)
+            VALUES ($1,$2,$3,$4,$5,$6,$7, 'unpaid', $8)
             RETURNING id`,
             [
                 req.user?.userId || null,
@@ -540,7 +561,8 @@ app.post('/checkout/place-order', async (req, res) => {
                 total,
                 `${address}, ${city}, ${county}`,
                 phone,
-                payment_method
+                payment_method,
+                notes
             ]
         );
 
@@ -649,7 +671,7 @@ app.get('/order-success/:id', async (req, res) => {
         getOrderItemsQuery,
         [orderId]
     );
-    
+
 
     res.render('order-success', {
         order: order.rows[0],
@@ -702,12 +724,97 @@ app.post('/mpesa/callback', async (req, res) => {
 
 
 //admin
-app.get('/admin/add-product', auth, async (req, res) => {
+app.get('/admin/products', auth, admin, async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT u.*, c.name AS category_name
+            FROM utensils u
+            LEFT JOIN categories c ON u.category_id = c.id
+            ORDER BY u.created_at DESC
+        `);
+        res.render('admin/products', { products: result.rows });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Could not load products');
+    }
+});
+
+app.get('/admin/add-product', auth, admin, async (req, res) => {
     const categories = await pool.query('SELECT * FROM categories')
-    res.render('admin/add-product', { utensil: [], cartQuantity: 2, categories: categories.rows })
+    res.render('admin/add-product', { utensil: [], cartQuantity: 2, categories: categories.rows, error: req.query.error || null })
 })
 
+app.post('/admin/add-product', auth, admin, (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+        if (err) {
+            return res.redirect('/admin/add-product?error=' + encodeURIComponent(err.message));
+        }
+        next();
+    });
+}, async (req, res) => {
+    const categories = await pool.query('SELECT * FROM categories');
 
+    try {
+        const { name, description, category_id, price, old_price, stock, badge } = req.body;
+
+        if (!name?.trim() || !category_id || !price || stock === undefined || stock === '') {
+            return res.status(400).render('admin/add-product', {
+                utensil: [],
+                cartQuantity: 2,
+                categories: categories.rows,
+                error: 'Please fill in all required fields.'
+            });
+        }
+
+        if (!req.file) {
+            return res.status(400).render('admin/add-product', {
+                utensil: [],
+                cartQuantity: 2,
+                categories: categories.rows,
+                error: 'Product image is required.'
+            });
+        }
+
+        const result = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'kitchenware/products'
+        });
+
+        const imageUrl = result.secure_url;
+
+        await fs.unlink(req.file.path).catch(() => {});
+
+        await pool.query(
+            `INSERT INTO utensils(name, description, category_id, price, old_price, stock, badge, image_url)
+             VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+            [name, description, category_id, price, old_price || null, stock, badge || null, imageUrl]
+        );
+
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.error(error);
+
+        if (req.file?.path) {
+            await fs.unlink(req.file.path).catch(() => {});
+        }
+
+        res.status(500).render('admin/add-product', {
+            utensil: [],
+            cartQuantity: 2,
+            categories: categories.rows,
+            error: 'Could not add product. Check Cloudinary credentials and try again.'
+        });
+    }
+})
+
+//update stock
+app.put('admin/update-stock', admin, async(req,res)=>{
+    try {
+        const {id, stock} = req.body
+
+    } catch (error) {
+        
+    }
+})
 
 
 

@@ -11,8 +11,8 @@
                 <img src="/images/Untitled_design-removebg-preview.png" class="h-14 md:h-16 w-auto object-contain">
 
                 <div class="">
-                    <h1 class="text-xl font-semibold tracking-wide">KitchenStore</h1>
-                    <p class="text-xs uppercase tracking-[0.25em] text-amber-400">
+                    <h1 class="text-sm md:text-xl font-semibold tracking-wide">KitchenStore</h1>
+                    <p class="text-xs uppercase tracking-[0.25em] text-amber-400 hidden md:block">
                         Premium Kitchenware
                     </p>
                 </div>
@@ -46,25 +46,31 @@
 
                     <div class="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center relative">
                         <i class="fa-solid fa-cart-shopping text-amber-400"></i>
-                        <div class="absolute -top-1.5 -right-1.5 rounded-full w-5 h-5 bg-amber-600 text-white text-xs font-bold flex items-center justify-center">
-                            <%= typeof cartCount !== 'undefined' ? cartCount : 0 %>
+                        <div
+                            class="absolute -top-1.5 -right-1.5 rounded-full w-5 h-5 bg-amber-600 text-white text-xs font-bold flex items-center justify-center">
+                            <%= typeof cartCount !=='undefined' ? cartCount : 0 %>
                         </div>
                     </div>
 
                     <div class="hidden sm:block text-left">
                         <p class="text-sm font-medium text-white">Cart</p>
-                        <p class="text-xs text-zinc-400">KES <%= grandTotal.toLocaleString() %></p>
+                        <p class="text-xs text-zinc-400">KES <%= grandTotal.toLocaleString() %>
+                        </p>
                     </div>
 
                 </button>
+                <% if(user){ %>
+                    <form action="/logout" method="post">
+                        <button class="hidden md:block" type="submit">Logout</button>
+                    </form>
+                    <% } %>
+                        <!-- MOBILE MENU -->
+                        <button type="button" id="mobileMenuBtn" aria-label="Open menu"
+                            class="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-white/5 transition">
 
-                <!-- MOBILE MENU -->
-                <button type="button" id="mobileMenuBtn" aria-label="Open menu"
-                    class="md:hidden h-11 w-11 flex items-center justify-center rounded-xl hover:bg-white/5 transition">
+                            <i class="fa-solid fa-bars text-lg"></i>
 
-                    <i class="fa-solid fa-bars text-lg"></i>
-
-                </button>
+                        </button>
 
             </div>
 
@@ -114,7 +120,7 @@
                 <p>Welcome <%= user.name %>
                 </p>
                 <% } else { %>
-                    <button >Login</button>
+                    <button>Login</button>
                     <% } %>
         </div>
     </div>
@@ -154,13 +160,22 @@
             <li><a href="/offers" class="block px-4 py-3 text-amber-400">Special Offers</a></li>
 
         </ul>
-        <% if (user) { %>
-            <p>Welcome <%= user.name %>
-            </p>
-            <% } else { %>
-                <button>Login</button>
-                <% } %>
+        <div class="flex flex-col px-4">
+            <% if (user) { %>
+                <p class="text-white font-bold pb-6">Welcome <%= user.name %>
+                </p>
+                <% } else { %>
+                    <a href="/login">Login</a>
+                    <% } %>
 
+                        <% if(user){ %>
+                            <form action="/logout" method="post">
+                                <button class="bg-amber-500 px-5 py-3 rounded text-white font-medium " type="submit">
+                                    Logout
+                                </button>
+                            </form>
+                            <% } %>
+        </div>
     </div>
 
 </div>

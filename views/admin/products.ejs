@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <title>Admin — Products | Kitchenware</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2 { font-family: 'Outfit', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-zinc-50 antialiased">
+
+    <%- include("../../partials/header.ejs") %>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
+            <div>
+                <h1 class="text-4xl font-bold text-zinc-900 tracking-tight">Products</h1>
+                <p class="text-zinc-500 mt-2">Manage your kitchenware catalog.</p>
+            </div>
+            <a href="/admin/add-product"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition">
+                <i class="fa-solid fa-plus text-sm"></i>
+                Add Product
+            </a>
+        </div>
+
+        <% if (products.length === 0) { %>
+            <div class="bg-white border border-zinc-200 rounded-3xl p-12 text-center">
+                <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-box-open text-2xl text-amber-500"></i>
+                </div>
+                <h2 class="text-xl font-bold text-zinc-900 mb-2">No products yet</h2>
+                <p class="text-zinc-500 mb-6">Add your first product to get started.</p>
+                <a href="/admin/add-product" class="text-amber-600 font-semibold hover:underline">Add a product</a>
+            </div>
+        <% } else { %>
+            <div class="bg-white border border-zinc-200 rounded-3xl overflow-hidden">
+                <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-amber-600 text-xs font-bold uppercase tracking-widest text-white">
+                    <div class="col-span-5">Product</div>
+                    <div class="col-span-2">Category</div>
+                    <div class="col-span-2 text-center">Price</div>
+                    <div class="col-span-1 text-center">Stock</div>
+                    <div class="col-span-2 text-right">Actions</div>
+                </div>
+                <div class="divide-y divide-zinc-100">
+                    <% products.forEach(product => { %>
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 py-5">
+                            <div class="md:col-span-5 flex items-center gap-4">
+                                <% if (product.image_url) { %>
+                                    <img src="<%= product.image_url %>" alt="<%= product.name %>"
+                                        class="h-16 w-16 object-cover rounded-xl border border-zinc-100 shrink-0">
+                                <% } else { %>
+                                    <div class="h-16 w-16 bg-zinc-100 rounded-xl flex items-center justify-center shrink-0">
+                                        <i class="fa-regular fa-image text-zinc-400"></i>
+                                    </div>
+                                <% } %>
+                                <div>
+                                    <p class="font-bold text-zinc-900"><%= product.name %></p>
+                                    <% if (product.badge) { %>
+                                        <span class="text-xs text-amber-600 font-semibold"><%= product.badge %></span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2 text-zinc-500 text-sm"><%= product.category_name || '—' %></div>
+                            <div class="md:col-span-2 text-center font-semibold text-zinc-900">
+                                KES <%= Number(product.price).toLocaleString() %>
+                            </div>
+                            <div class="md:col-span-1 text-center font-medium text-zinc-700"><%= product.stock %></div>
+                            <div class="md:col-span-2 text-right">
+                                <a href="/utensil/<%= product.id %>"
+                                    class="text-amber-600 font-semibold text-sm hover:underline">View</a>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
+    </main>
+
+    <%- include("../../partials/footer") %>
+</body>
+
+</html>

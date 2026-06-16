@@ -30,7 +30,7 @@ export const stkPush = async (phone, amount, orderId) => {
         PartyA: phone,
         PartyB: process.env.DARAJA_SHORTCODE,
         PhoneNumber: phone,
-        CallBackURL: `https://efficaciously-subcaecal-malissa.ngrok-free.dev/mpesa/callback`,
+        CallBackURL: `https://kitchen-ware.vercel.app/mpesa/callback`,
         AccountReference: `ORDER_${orderId}`,
         TransactionDesc: "KitchenWare Order Payment"
 

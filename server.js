@@ -11,7 +11,6 @@ import axios from 'axios';
 import { stkPush } from './public/js/mpesa_push.js';
 import upload from './middleware/upload.js';
 import cloudinary from './db/cloudinary.js';
-import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -52,25 +51,25 @@ const clearCart = (req, res) => {
     res.clearCookie('cart');
 };
 
-app.use(express.static('public'));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.set('view engine', 'ejs');
-// app.set('views', './views');
-app.set("views", path.join(__dirname, "views"));
-app.use(express.json());
+const viewsPath = path.join(__dirname, 'views');
+const publicPath = path.join(__dirname, 'public');
 
-app.use(express.urlencoded({
-    extended: true
-}));
+app.set('view engine', 'ejs');
+app.set('views', viewsPath);
+app.use(express.static(publicPath));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
-    secret: '73b1e9cff94cf52cf953f0181d935488',
+    secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'dev-session-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24
+        maxAge: 1000 * 60 * 60 * 24,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
     }
 }))
 
@@ -780,13 +779,16 @@ app.post('/admin/add-product', auth, admin, (req, res, next) => {
             });
         }
 
-        const result = await cloudinary.uploader.upload(req.file.path, {
-            folder: 'kitchenware/products'
+        const imageUrl = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                { folder: 'kitchenware/products' },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result.secure_url);
+                }
+            );
+            stream.end(req.file.buffer);
         });
-
-        const imageUrl = result.secure_url;
-
-        await fs.unlink(req.file.path).catch(() => { });
 
         await pool.query(
             `INSERT INTO utensils(name, description, category_id, price, old_price, stock, badge, image_url)
@@ -796,17 +798,13 @@ app.post('/admin/add-product', auth, admin, (req, res, next) => {
 
         res.redirect('/admin/products');
     } catch (error) {
-        console.error(error);
-
-        if (req.file?.path) {
-            await fs.unlink(req.file.path).catch(() => { });
-        }
+        console.error('Add product failed:', error);
 
         res.status(500).render('admin/add-product', {
             utensil: [],
             cartQuantity: 2,
             categories: categories.rows,
-            error: 'Could not add product. Check Cloudinary credentials and try again.'
+            error: error.message || 'Could not add product. Please try again.'
         });
     }
 })

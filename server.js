@@ -781,7 +781,7 @@ app.post('/admin/add-product', auth, admin, (req, res, next) => {
 
         const imageUrl = result.secure_url;
 
-        await fs.unlink(req.file.path).catch(() => {});
+        await fs.unlink(req.file.path).catch(() => { });
 
         await pool.query(
             `INSERT INTO utensils(name, description, category_id, price, old_price, stock, badge, image_url)
@@ -794,7 +794,7 @@ app.post('/admin/add-product', auth, admin, (req, res, next) => {
         console.error(error);
 
         if (req.file?.path) {
-            await fs.unlink(req.file.path).catch(() => {});
+            await fs.unlink(req.file.path).catch(() => { });
         }
 
         res.status(500).render('admin/add-product', {
@@ -807,12 +807,12 @@ app.post('/admin/add-product', auth, admin, (req, res, next) => {
 })
 
 //update stock
-app.put('admin/update-stock', admin, async(req,res)=>{
+app.put('admin/update-stock', admin, async (req, res) => {
     try {
-        const {id, stock} = req.body
+        const { id, stock } = req.body
 
     } catch (error) {
-        
+
     }
 })
 
@@ -823,6 +823,15 @@ app.put('admin/update-stock', admin, async(req,res)=>{
 
 
 
-app.listen(3200, () => {
-    console.log('Server is running on port 3200');
-});
+// app.listen(3200, () => {
+//     console.log('Server is running on port 3200');
+// });
+const PORT = process.env.PORT || 3200;
+
+if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+        console.log(`Server running on ${PORT}`);
+    });
+}
+
+export default app

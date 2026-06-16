@@ -75,6 +75,8 @@
     --container-lg: 32rem;
     --container-xl: 36rem;
     --container-2xl: 42rem;
+    --container-3xl: 48rem;
+    --container-6xl: 72rem;
     --container-7xl: 80rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: calc(1 / 0.75);
@@ -371,6 +373,9 @@
   .left-3 {
     left: calc(var(--spacing) * 3);
   }
+  .left-5 {
+    left: calc(var(--spacing) * 5);
+  }
   .z-10 {
     z-index: 10;
   }
@@ -454,6 +459,9 @@
   }
   .mt-12 {
     margin-top: calc(var(--spacing) * 12);
+  }
+  .mt-14 {
+    margin-top: calc(var(--spacing) * 14);
   }
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
@@ -718,6 +726,12 @@
   }
   .max-w-2xl {
     max-width: var(--container-2xl);
+  }
+  .max-w-3xl {
+    max-width: var(--container-3xl);
+  }
+  .max-w-6xl {
+    max-width: var(--container-6xl);
   }
   .max-w-7xl {
     max-width: var(--container-7xl);
@@ -1468,6 +1482,10 @@
     --tw-gradient-to: var(--color-yellow-50);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
+  .to-zinc-100 {
+    --tw-gradient-to: var(--color-zinc-100);
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
   .to-zinc-100\/60 {
     --tw-gradient-to: color-mix(in srgb, oklch(96.7% 0.001 286.375) 60%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1536,6 +1554,9 @@
   .px-6 {
     padding-inline: calc(var(--spacing) * 6);
   }
+  .px-7 {
+    padding-inline: calc(var(--spacing) * 7);
+  }
   .px-8 {
     padding-inline: calc(var(--spacing) * 8);
   }
@@ -1581,6 +1602,9 @@
   .py-12 {
     padding-block: calc(var(--spacing) * 12);
   }
+  .py-14 {
+    padding-block: calc(var(--spacing) * 14);
+  }
   .py-16 {
     padding-block: calc(var(--spacing) * 16);
   }
@@ -1604,6 +1628,9 @@
   }
   .pr-4 {
     padding-right: calc(var(--spacing) * 4);
+  }
+  .pr-5 {
+    padding-right: calc(var(--spacing) * 5);
   }
   .pb-2 {
     padding-bottom: calc(var(--spacing) * 2);
@@ -1789,6 +1816,9 @@
   .tracking-widest {
     --tw-tracking: var(--tracking-widest);
     letter-spacing: var(--tracking-widest);
+  }
+  .text-amber-100 {
+    color: var(--color-amber-100);
   }
   .text-amber-200 {
     color: var(--color-amber-200);

@@ -373,6 +373,10 @@ app.post('/cart/add', async (req, res) => {
         res.send('Error adding to cart');
     }
 })
+app.get('/faqs',(req,res)=>{
+    console.log('faqqq')
+    return res.render('faqs');
+});
 //view cart
 app.get('/cart', (req, res) => {
     const cart = req.session.cart || []

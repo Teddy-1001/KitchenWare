@@ -12,6 +12,8 @@ import { stkPush } from './public/js/mpesa_push.js';
 import upload from './middleware/upload.js';
 import cloudinary from './db/cloudinary.js';
 import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 dotenv.config();
 const app = express();
@@ -51,6 +53,8 @@ const clearCart = (req, res) => {
 };
 
 app.use(express.static('public'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use(express.json());

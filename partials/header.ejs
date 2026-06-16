@@ -41,20 +41,20 @@
             <div class="flex items-center gap-3">
 
                 <!-- CART -->
-                <button type="button"
-                    class="flex items-center gap-3 px-4 py-2 rounded-2xl border border-white/10 hover:border-amber-500/40 hover:bg-white/5 transition">
+                <button type="button" onclick="openCart()"
+                    class="flex items-center gap-3 px-4 py-2 rounded-2xl border border-white/10 hover:border-amber-500/40 hover:bg-white/5 transition cursor-pointer">
 
                     <div class="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center relative">
                         <i class="fa-solid fa-cart-shopping text-amber-400"></i>
-                        <div class="relative rounded-full w-6 h-6  bottom-4 bg-amber-600 text-white text-sm">
-                            <p><%= cart ? cart.length : 0 %></p>
+                        <div class="absolute -top-1.5 -right-1.5 rounded-full w-5 h-5 bg-amber-600 text-white text-xs font-bold flex items-center justify-center">
+                            <%= typeof cartCount !== 'undefined' ? cartCount : 0 %>
                         </div>
                     </div>
 
-                    <a href="/cart" class="hidden sm:block text-left">
-                        <p class="text-sm font-medium">Cart</p>
+                    <div class="hidden sm:block text-left">
+                        <p class="text-sm font-medium text-white">Cart</p>
                         <p class="text-xs text-zinc-400">KES <%= grandTotal.toLocaleString() %></p>
-                    </a>
+                    </div>
 
                 </button>
 
@@ -186,3 +186,5 @@
     closeBtn?.addEventListener('click', closeMenu);
     overlay?.addEventListener('click', closeMenu);
 </script>
+
+<%- include('./cart-sidebar.ejs') %>

@@ -10,5 +10,10 @@ const pool = new Pool({
     password: String(process.env.DB_PASSWORD),
     port: process.env.DB_PORT,
 })
-
+// const pool = new Pool({
+//     connectionString: process.env.NEON_URL,
+//     ssl: {
+//         rejectUnauthorized: false
+//     }
+// })
 export default pool;

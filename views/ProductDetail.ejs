@@ -200,30 +200,24 @@
                                 <!-- Quantity Stepper -->
                                 <div
                                     class="flex items-center border-[1.5px] border-zinc-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                                    <form action="/cart/decrease" method="POST">
-                                        <input type="hidden" name="id" value="<%= utensil.id %>">
-                                        <button type="submit"
-                                            class="qty-decr w-12 h-[3.25rem] flex items-center justify-center bg-transparent border-none cursor-pointer text-zinc-500 text-sm transition-colors duration-200 hover:bg-zinc-50 hover:text-amber-600"
-                                            aria-label="Decrease quantity">
-                                            <i class="fa-solid fa-minus text-xs"></i>
-                                        </button>
-                                    </form>
-                                    <input type="text" id="quantity" value="<%= cartQuantity %>"
+                                    <button type="button"
+                                        class="qty-decr w-12 h-[3.25rem] flex items-center justify-center bg-transparent border-none cursor-pointer text-zinc-500 text-sm transition-colors duration-200 hover:bg-zinc-50 hover:text-amber-600"
+                                        aria-label="Decrease quantity">
+                                        <i class="fa-solid fa-minus text-xs"></i>
+                                    </button>
+                                    <input type="text" id="quantity" value="1"
                                         readonly class="w-14 text-center border-none outline-none font-semibold text-base text-zinc-900 bg-transparent">
-                                    <form action="/cart/increase" method="POST">
-                                        <input type="hidden" name="id" value="<%= utensil.id %>">
-                                        <button type="submit"
-                                            class="qty-incr w-12 h-[3.25rem] flex items-center justify-center bg-transparent border-none cursor-pointer text-zinc-500 text-sm transition-colors duration-200 hover:bg-zinc-50 hover:text-amber-600"
-                                            aria-label="Increase quantity">
-                                            <i class="fa-solid fa-plus text-xs"></i>
-                                        </button>
-                                    </form>
+                                    <button type="button"
+                                        class="qty-incr w-12 h-[3.25rem] flex items-center justify-center bg-transparent border-none cursor-pointer text-zinc-500 text-sm transition-colors duration-200 hover:bg-zinc-50 hover:text-amber-600"
+                                        aria-label="Increase quantity">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </button>
                                 </div>
 
                                 <!-- Add to Cart -->
                                 <form action="/cart/add" method="POST" class="inline" id="addToCartForm">
                                     <input type="hidden" name="id" value="<%= utensil.id %>">
-                                    <input type="hidden" name="quantity" value="<%= cartQuantity %>" id="cartQtyInput">
+                                    <input type="hidden" name="quantity" value="1" id="cartQtyInput">
                                     <button type="submit" id="addToCartBtn"
                                         class="inline-flex items-center gap-2 px-8 h-[3.25rem] bg-gradient-to-r from-amber-500 to-amber-600 text-white font-semibold text-[0.95rem] rounded-xl border-none cursor-pointer shadow-lg shadow-amber-200/40 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:-translate-y-0.5 hover:shadow-xl hover:shadow-amber-300/40 active:translate-y-0 active:shadow-md">
                                         <i class="fa-solid fa-cart-plus"></i> Add to Cart
@@ -233,7 +227,7 @@
                                 <!-- Buy Now -->
                                 <form action="/cart/add" method="POST" class="inline" id="buyNowForm">
                                     <input type="hidden" name="id" value="<%= utensil.id %>">
-                                    <input type="hidden" name="quantity" value="<%= cartQuantity %>" id="buyNowQtyInput">
+                                    <input type="hidden" name="quantity" value="1" id="buyNowQtyInput">
                                     <input type="hidden" name="redirect" value="/checkout">
                                     <button type="submit" id="buyNowBtn"
                                         class="inline-flex items-center gap-2 px-8 h-[3.25rem] bg-zinc-900 text-white font-semibold text-[0.95rem] rounded-xl border-none cursor-pointer shadow-lg shadow-zinc-200/60 transition-all duration-300 ease-[cubic-bezier(.22,1,.36,1)] hover:bg-zinc-800 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-zinc-300/50 active:translate-y-0">
@@ -844,6 +838,8 @@
                     }
                 });
             </script>
+
+            
 
 </body>
 

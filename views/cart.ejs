@@ -185,9 +185,9 @@
                                     <span class="font-medium text-zinc-900">KES <%= total.toLocaleString() %></span>
                                 </div>
                                 <div class="flex justify-between text-zinc-500">
-                                    <span>Shipping estimate</span>
-                                    <span class="font-medium text-zinc-900">KES <%= delivery.toLocaleString() %></span>
-                                </div>
+                            <span>Delivery (5%)</span>
+                            <span class="font-medium text-zinc-900">KES <%= delivery.toLocaleString() %></span>
+                        </div>
                                 <div class="border-t border-zinc-100 pt-4 flex justify-between">
                                     <span class="text-zinc-900 font-bold text-lg">Order Total</span>
                                     <span class="text-amber-600 font-bold text-2xl tracking-tight">KES <%=
@@ -196,10 +196,10 @@
                             </div>
 
                             <!-- Checkout Button -->
-                            <button
-                                class="w-full bg-zinc-900 hover:bg-zinc-800 text-white py-4 rounded-2xl font-bold tracking-wide shadow-lg shadow-zinc-200 transition-all duration-200 active:scale-[0.98] mb-6">
+                            <a href="/checkout"
+                                class="w-full inline-flex items-center justify-center bg-zinc-900 hover:bg-zinc-800 text-white py-4 rounded-2xl font-bold tracking-wide shadow-lg shadow-zinc-200 transition-all duration-200 active:scale-[0.98] mb-6">
                                 Proceed to Checkout
-                            </button>
+                            </a>
 
                             <!-- Trust Badges -->
                             <div class="grid grid-cols-2 gap-4 pt-6 border-t border-zinc-100">

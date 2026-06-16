@@ -22,7 +22,7 @@
                         Shop Collection
                     </span>
                     <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-zinc-900 tracking-tight">
-                        All Kitchen Utensils
+                        Special Offers
                     </h1>
                     <p class="mt-4 text-zinc-600 text-sm sm:text-base leading-relaxed">
                         Discover premium utensils designed to make cooking easier,
@@ -36,7 +36,7 @@
                             <% if (category) { %>
                                 <%= category %> Utensils
                                     <% } else { %>
-                                        All Utensils
+                                        All Offer Utensils
                                         <% } %>
                         </span>
                     </nav>
@@ -63,15 +63,14 @@
                     <%- include("../partials/utensilCard.ejs", { utensil }) %>
                         <% }) %>
             </div>
-
         </main>
 
-            <%- include("../partials/footer.ejs") %>
+        <%- include("../partials/footer.ejs") %>
 
-                <script>
-                    const year = document.getElementById('year');
-                    if (year) year.textContent = new Date().getFullYear();
-                </script>
+            <script>
+                const year = document.getElementById('year');
+                if (year) year.textContent = new Date().getFullYear();
+            </script>
 </body>
 
 </html>

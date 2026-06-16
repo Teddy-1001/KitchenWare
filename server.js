@@ -91,7 +91,6 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-    // 2. Decode user JWT globally
     const token = req.cookies?.token;
     if (token) {
         try {
@@ -108,7 +107,7 @@ app.use((req, res, next) => {
         res.locals.user = null;
     }
 
-    // 3. Populate cart and total info globally
+    // Populate cart and total  globally
     const cart = req.session.cart || [];
     res.locals.cart = cart;
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);

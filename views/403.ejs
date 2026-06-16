@@ -1,12 +1,81 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>403 Forbidden</title>
-</head>
-<body>
-    <h1>403 - Access Denied</h1>
-    <p><%= message %></p>
+<html lang="en">
 
-    <a href="/">Go Home</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <title>KitchenWare | Access Denied</title>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-zinc-50 antialiased min-h-screen flex flex-col">
+
+    <%- include("../partials/header.ejs") %>
+
+    <main class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16">
+        <div class="w-full max-w-lg text-center">
+
+            <div class="bg-white border border-zinc-200 rounded-3xl p-10 md:p-12 shadow-xl shadow-zinc-100">
+
+                <div class="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-100">
+                    <i class="fa-solid fa-shield-halved text-4xl text-red-500"></i>
+                </div>
+
+                <p class="text-xs font-bold uppercase tracking-widest text-red-500 mb-3">Error 403</p>
+
+                <h1 class="text-3xl md:text-4xl font-bold text-zinc-900 tracking-tight mb-3">
+                    Access Denied
+                </h1>
+
+                <p class="text-zinc-500 font-light leading-relaxed mb-8">
+                    <%= message || 'You do not have permission to view this page.' %>
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="/"
+                        class="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition shadow-lg shadow-zinc-200">
+                        <i class="fa-solid fa-house text-sm"></i>
+                        Go Home
+                    </a>
+                    <a href="/all-utensils"
+                        class="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-zinc-200 text-zinc-700 font-bold rounded-xl hover:border-amber-400 hover:text-amber-600 transition">
+                        <i class="fa-solid fa-store text-sm"></i>
+                        Browse Shop
+                    </a>
+                </div>
+
+            </div>
+
+            <p class="mt-8 text-sm text-zinc-400">
+                Need admin access?
+                <a href="/login" class="text-amber-600 font-semibold hover:underline">Sign in</a>
+                with an admin account.
+            </p>
+
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>
 </body>
+
 </html>

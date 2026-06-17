@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <title>KitchenWare | Track Order</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2 { font-family: 'Outfit', sans-serif; }
+        .track-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e4e4e7;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            background: #fafafa;
+        }
+        .track-input:focus {
+            outline: none;
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body class="bg-zinc-50 antialiased min-h-screen flex flex-col">
+
+    <%- include("../partials/header.ejs") %>
+
+    <main class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-16">
+        <div class="w-full max-w-md">
+
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-100">
+                    <i class="fa-solid fa-truck-fast text-3xl text-amber-600"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-zinc-900 tracking-tight">Track Your Order</h1>
+                <p class="text-zinc-500 mt-2 font-light">Enter your order number and phone used at checkout.</p>
+            </div>
+
+            <div class="bg-white border border-zinc-200 rounded-3xl p-8 shadow-xl shadow-zinc-100">
+
+                <% if (error) { %>
+                    <div class="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700">
+                        <i class="fa-solid fa-circle-exclamation mt-0.5"></i>
+                        <p class="text-sm font-medium"><%= error %></p>
+                    </div>
+                <% } %>
+
+                <form action="/orders/track" method="POST" class="space-y-5">
+                    <div>
+                        <label for="order_id" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Order Number</label>
+                        <input type="text" id="order_id" name="order_id" required placeholder="e.g. 42" class="track-input">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="07XX XXX XXX" class="track-input">
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-zinc-900 hover:bg-zinc-800 text-white py-4 rounded-2xl font-bold tracking-wide shadow-lg shadow-zinc-200 transition">
+                        Track Order
+                    </button>
+                </form>
+            </div>
+
+            <p class="text-center mt-6 text-sm text-zinc-400">
+                Have an account?
+                <a href="/login" class="text-amber-600 font-semibold hover:underline">Sign in</a>
+                to see all your orders.
+            </p>
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>
+</body>
+
+</html>

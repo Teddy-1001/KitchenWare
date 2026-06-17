@@ -13,6 +13,7 @@ import upload from "./middleware/upload.js";
 import cloudinary from "./db/cloudinary.js";
 import { fileURLToPath } from "url";
 import path from "path";
+import { refundPayment } from "./public/js/mpesa_refund.js";
 
 dotenv.config();
 const app = express();
@@ -54,6 +55,58 @@ const clearCart = (req, res) => {
     req.session.cart = [];
     res.clearCookie("cart");
 };
+
+const phonesMatch = (a, b) => {
+    if (!a || !b) return false;
+    const normalize = (p) => {
+        let c = String(p).replace(/\s+/g, "");
+        if (c.startsWith("0")) c = "254" + c.slice(1);
+        if (c.startsWith("+")) c = c.slice(1);
+        return c;
+    };
+    return normalize(a) === normalize(b);
+};
+
+const canCancelOrder = (order) =>
+    !["shipped", "delivered", "cancelled"].includes(order.status);
+
+const grantOrderAccess = (req, orderId) => {
+    if (!req.session.verifiedOrders) req.session.verifiedOrders = [];
+    const id = Number(orderId);
+    if (!req.session.verifiedOrders.includes(id)) {
+        req.session.verifiedOrders.push(id);
+    }
+};
+
+const canAccessOrder = (req, order) => {
+    if (req.user?.userId && order.user_id === req.user.userId) return true;
+    const verified = req.session?.verifiedOrders || [];
+    return verified.includes(Number(order.id));
+};
+
+async function getOrderItems(orderId) {
+    const result = await pool.query(
+        `SELECT oi.quantity, oi.price, u.name, u.image_url
+         FROM order_items oi
+         JOIN utensils u ON u.id = oi.utensil_id
+         WHERE oi.order_id = $1`,
+        [orderId],
+    );
+    return result.rows;
+}
+
+async function restoreOrderStock(orderId) {
+    const items = await pool.query(
+        `SELECT utensil_id, quantity FROM order_items WHERE order_id = $1`,
+        [orderId],
+    );
+    for (const item of items.rows) {
+        await pool.query(
+            `UPDATE utensils SET stock = stock + $1 WHERE id = $2`,
+            [item.quantity, item.utensil_id],
+        );
+    }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -743,6 +796,8 @@ app.get("/order-success/:id", async (req, res) => {
         ON u.id = oi.utensil_id
     WHERE oi.order_id = $1
 `;
+    grantOrderAccess(req, orderId);
+
     const items = await pool.query(getOrderItemsQuery, [orderId]);
 
     res.render("order-success", {
@@ -750,6 +805,241 @@ app.get("/order-success/:id", async (req, res) => {
         items: items.rows,
     });
 });
+
+app.get("/orders", auth, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM orders
+             WHERE user_id = $1
+             ORDER BY created_at DESC`,
+            [req.user.userId],
+        );
+
+        res.render("my-orders", {
+            orders: result.rows,
+            message: req.query.message || null,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Could not load your orders");
+    }
+});
+
+app.get("/orders/track", (req, res) => {
+    res.render("track-order", { error: req.query.error || null });
+});
+
+app.post("/orders/track", async (req, res) => {
+    const { order_id, phone } = req.body;
+
+    if (!order_id?.trim() || !phone?.trim()) {
+        return res.redirect(
+            "/orders/track?error=" +
+            encodeURIComponent("Please enter your order number and phone"),
+        );
+    }
+
+    try {
+        const order = await pool.query(`SELECT * FROM orders WHERE id = $1`, [
+            order_id.trim(),
+        ]);
+
+        if (!order.rows.length || !phonesMatch(order.rows[0].phone, phone)) {
+            return res.redirect(
+                "/orders/track?error=" +
+                encodeURIComponent("Order not found. Check your order number and phone."),
+            );
+        }
+
+        grantOrderAccess(req, order.rows[0].id);
+        res.redirect(`/orders/${order.rows[0].id}`);
+    } catch (err) {
+        console.error(err);
+        res.redirect(
+            "/orders/track?error=" +
+            encodeURIComponent("Something went wrong. Please try again."),
+        );
+    }
+});
+
+app.get("/orders/:id", async (req, res) => {
+    try {
+        const order = await pool.query(`SELECT * FROM orders WHERE id = $1`, [
+            req.params.id,
+        ]);
+
+        if (!order.rows.length) {
+            return res.redirect("/orders/track?error=" + encodeURIComponent("Order not found"));
+        }
+
+        const orderData = order.rows[0];
+
+        if (!canAccessOrder(req, orderData)) {
+            return res.redirect(
+                "/orders/track?error=" +
+                encodeURIComponent("Verify your order with order number and phone to view details"),
+            );
+        }
+
+        const items = await getOrderItems(orderData.id);
+
+        res.render("order-detail", {
+            order: orderData,
+            items,
+            canCancel: canCancelOrder(orderData),
+            message: req.query.message || null,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Could not load order");
+    }
+});
+
+app.post("/orders/:id/cancel", async (req, res) => {
+    const orderId = req.params.id;
+
+    try {
+        const order = await pool.query(`SELECT * FROM orders WHERE id = $1`, [orderId]);
+
+        if (!order.rows.length) {
+            return res.redirect("/orders/track?error=" + encodeURIComponent("Order not found"));
+        }
+
+        const orderData = order.rows[0];
+
+        if (!canAccessOrder(req, orderData)) {
+            return res.redirect(
+                "/orders/track?error=" + encodeURIComponent("You cannot cancel this order"),
+            );
+        }
+
+        if (!canCancelOrder(orderData)) {
+            return res.redirect(
+                `/orders/${orderId}?message=` +
+                encodeURIComponent("This order can no longer be cancelled"),
+            );
+        }
+
+        if (orderData.payment_status === "paid" && orderData.payment_method === "mpesa") {
+            try {
+                const refundResponse = await refundPayment(
+                    orderData.phone,
+                    orderData.total,
+                    orderId,
+                );
+
+                const conversationId =
+                    refundResponse.ConversationID ||
+                    refundResponse.OriginatorConversationID;
+
+                await pool.query(
+                    `UPDATE orders SET
+                        refund_status = 'processing',
+                        refund_conversation_id = $1
+                     WHERE id = $2`,
+                    [conversationId, orderId],
+                );
+            } catch (refundErr) {
+                console.error("M-Pesa B2C refund failed:", refundErr.message || refundErr);
+                return res.redirect(
+                    `/orders/${orderId}?message=` +
+                        encodeURIComponent(
+                            refundErr.message ||
+                                "Refund could not be sent. Order was not cancelled — try again or contact support.",
+                        ),
+                );
+            }
+        }
+
+        await restoreOrderStock(orderId);
+        await pool.query(
+            `UPDATE orders SET status = 'cancelled', updated_at = NOW() WHERE id = $1`,
+            [orderId],
+        );
+
+        const cancelMessage =
+            orderData.payment_status === "paid" && orderData.payment_method === "mpesa"
+                ? "Order cancelled. Your M-Pesa refund is being processed."
+                : "Order cancelled successfully";
+
+        if (req.user?.userId && Number(orderData.user_id) === Number(req.user.userId)) {
+            return res.redirect(
+                "/orders?message=" + encodeURIComponent(cancelMessage),
+            );
+        }
+
+        res.redirect(
+            `/orders/${orderId}?message=` + encodeURIComponent(cancelMessage),
+        );
+    } catch (err) {
+        console.error(err);
+        res.redirect(
+            `/orders/${orderId}?message=` + encodeURIComponent("Could not cancel order"),
+        );
+    }
+});
+//refund result>>on success
+app.post("/mpesa/refund-result", async (req, res) => {
+    try {
+        const result = req.body?.Result;
+        if (!result) {
+            console.error("Refund result missing Result body:", req.body);
+            return res.json({ ResultCode: 0, ResultDesc: "Accepted" });
+        }
+
+        const refundStatus = result.ResultCode === 0 ? "completed" : "failed";
+
+        await pool.query(
+            `UPDATE orders
+             SET refund_status = $1,
+                 refund_transaction_id = $2,
+                 updated_at = NOW()
+             WHERE refund_conversation_id = $3
+                OR refund_conversation_id = $4`,
+            [
+                refundStatus,
+                result.TransactionID || null,
+                result.ConversationID,
+                result.OriginatorConversationID,
+            ],
+        );
+
+        console.log("Refund result:", refundStatus, result.ResultDesc);
+    } catch (error) {
+        console.error("Refund result handler error:", error);
+    }
+
+    res.json({
+        ResultCode: 0,
+        ResultDesc: "Accepted",
+    });
+});
+
+//queuetimeout endpoint>>if mpesa cant process immediately
+app.post("/mpesa/refund-timeout", async (req, res) => {
+    try {
+        console.log("Refund timeout:", req.body);
+        const conversationId =
+            req.body?.Result?.ConversationID ||
+            req.body?.ConversationID;
+
+        if (conversationId) {
+            await pool.query(
+                `UPDATE orders SET refund_status = 'timeout', updated_at = NOW()
+                 WHERE refund_conversation_id = $1`,
+                [conversationId],
+            );
+        }
+    } catch (error) {
+        console.error("Refund timeout handler error:", error);
+    }
+
+    res.json({
+        ResultCode: 0,
+        ResultDesc: "Accepted",
+    });
+});
+
 //mpesa callback
 app.post("/mpesa/callback", async (req, res) => {
     try {
@@ -952,6 +1242,50 @@ app.post("/products/:id/review", auth, async (req, res) => {
     );
     res.redirect(`/products/${productId}`);
 });
+
+
+app.post("/test/refund", async (req, res) => {
+
+    try {
+
+        const { phone, amount } = req.body;
+
+        console.log("Testing refund...");
+        console.log({
+            phone,
+            amount
+        });
+
+
+        const response = await refundPayment(
+            phone,
+            amount,
+            req.body.orderId || 0,
+        );
+        console.log("B2C RESPONSE:", response);
+        res.json({
+            success: true,
+            response
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "REFUND ERROR:",
+            error.response?.data || error.message
+        );
+
+
+        res.status(500).json({
+            success:false,
+            error:error.response?.data || error.message
+        });
+    }
+
+});
+
+
 
 // app.listen(3200, () => {
 //     console.log('Server is running on port 3200');

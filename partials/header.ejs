@@ -115,12 +115,16 @@
                 <li><a href="/offers"
                         class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Special
                         Offers</a></li>
+                <li><a href="/orders/track"
+                        class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Track Order</a></li>
             </ul>
             <% if (user) { %>
-                <p>Welcome <%= user.name %>
-                </p>
+                <div class="flex items-center gap-4">
+                    <a href="/orders" class="text-white/90 hover:text-white text-sm font-medium transition">My Orders</a>
+                    <p>Welcome <%= user.name %></p>
+                </div>
                 <% } else { %>
-                    <a href="/login">Login</a>
+                    <a href="/login" class="text-white/90 hover:text-white transition">Login</a>
                     <% } %>
         </div>
     </div>
@@ -158,23 +162,22 @@
             <li><a href="/all-utensils?category=storage" class="block px-4 py-3 text-amber-400 ">Storage</a></li>
             <li><a href="/all-utensils?category=dining" class="block px-4 py-3 text-amber-400 ">Dining</a></li>
             <li><a href="/offers" class="block px-4 py-3 text-amber-400">Special Offers</a></li>
-
-        </ul>
-        <div class="flex flex-col px-4">
+            <li><a href="/orders/track" class="block px-4 py-3 text-amber-400">Track Order</a></li>
             <% if (user) { %>
-                <p class="text-white font-bold pb-6">Welcome <%= user.name %>
-                </p>
-                <% } else { %>
-                    <a href="/login">Login</a>
-                    <% } %>
-
-                        <% if(user){ %>
-                            <form action="/logout" method="post">
-                                <button class="bg-amber-500 px-5 py-3 rounded text-white font-medium " type="submit">
-                                    Logout
-                                </button>
-                            </form>
-                            <% } %>
+                <li><a href="/orders" class="block px-4 py-3 text-amber-400">My Orders</a></li>
+            <% } %>
+        </ul>
+        <div class="flex flex-col px-4 mt-4">
+            <% if (user) { %>
+                <p class="text-white font-bold pb-4">Welcome <%= user.name %></p>
+                <form action="/logout" method="post">
+                    <button class="bg-amber-500 px-5 py-3 rounded text-white font-medium w-full" type="submit">
+                        Logout
+                    </button>
+                </form>
+            <% } else { %>
+                <a href="/login" class="text-amber-400 pb-4 block">Login</a>
+            <% } %>
         </div>
     </div>
 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <title>KitchenWare | My Orders</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-zinc-50 antialiased">
+
+    <%- include("../partials/header.ejs") %>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-10">
+            <div>
+                <h1 class="text-4xl font-bold text-zinc-900 tracking-tight">My Orders</h1>
+                <p class="text-zinc-500 mt-2 font-light">Track and manage your purchases.</p>
+            </div>
+            <a href="/orders/track"
+                class="inline-flex items-center gap-2 text-amber-600 font-semibold hover:underline">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                Track by order number
+            </a>
+        </div>
+
+        <% if (message) { %>
+            <div class="mb-6 flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-2xl text-green-700">
+                <i class="fa-solid fa-circle-check"></i>
+                <p class="text-sm font-medium"><%= message %></p>
+            </div>
+        <% } %>
+
+        <% if (orders.length === 0) { %>
+            <div class="bg-white border border-zinc-200 rounded-3xl p-12 text-center">
+                <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-box-open text-2xl text-amber-500"></i>
+                </div>
+                <h2 class="text-xl font-bold text-zinc-900 mb-2">No orders yet</h2>
+                <p class="text-zinc-500 mb-6">When you place an order, it will show up here.</p>
+                <a href="/all-utensils"
+                    class="inline-flex items-center justify-center px-8 py-3.5 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition">
+                    Start Shopping
+                </a>
+            </div>
+        <% } else { %>
+            <div class="space-y-4">
+                <% orders.forEach(order => {
+                    const statusColors = {
+                        pending: 'bg-amber-50 text-amber-700 border-amber-100',
+                        paid: 'bg-blue-50 text-blue-700 border-blue-100',
+                        processing: 'bg-indigo-50 text-indigo-700 border-indigo-100',
+                        shipped: 'bg-violet-50 text-violet-700 border-violet-100',
+                        delivered: 'bg-green-50 text-green-700 border-green-100',
+                        cancelled: 'bg-red-50 text-red-700 border-red-100'
+                    };
+                    const badgeClass = statusColors[order.status] || 'bg-zinc-100 text-zinc-600 border-zinc-200';
+                %>
+                    <div class="bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-md transition">
+                        <div class="flex flex-wrap items-start justify-between gap-4">
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-zinc-400">Order #<%= order.id %></p>
+                                <p class="text-sm text-zinc-500 mt-1">
+                                    <%= new Date(order.created_at).toLocaleDateString('en-KE', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %>
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full border <%= badgeClass %>">
+                                    <%= order.status %>
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full border bg-zinc-50 text-zinc-600 border-zinc-200">
+                                    <%= order.payment_status %>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-zinc-100">
+                            <div>
+                                <p class="text-sm text-zinc-500">Total</p>
+                                <p class="text-xl font-bold text-amber-600">KES <%= Number(order.total).toLocaleString() %></p>
+                            </div>
+                            <a href="/orders/<%= order.id %>"
+                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-zinc-900 text-white font-bold rounded-xl hover:bg-zinc-800 transition text-sm">
+                                View & Track
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+    </main>
+
+    <%- include("../partials/toastr") %>
+    <%- include("../partials/footer") %>
+</body>
+
+</html>

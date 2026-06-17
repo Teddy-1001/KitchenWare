@@ -688,3 +688,203 @@
 </body>
 
 </html>
+
+
+
+
+
+<div id="reviews" class="tab-content hidden anim-tab-slide">
+                                <!-- Rating Summary -->
+                                <div class="grid md:grid-cols-[280px_1fr] gap-8 mb-10">
+                                    <!-- Big score -->
+                                    <div
+                                        class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-2xl p-8 text-center border border-amber-100/50">
+                                        <div class="text-5xl font-extrabold text-zinc-800">
+                                            <%= utensil.rating || 4.8 %>
+                                        </div>
+                                        <div class="flex justify-center text-amber-400 my-3 gap-0.5 text-lg">
+                                            <% for(let i=0; i < 5; i++) { %><i class="fas fa-star"></i>
+                                                <% } %>
+                                        </div>
+                                        <p class="text-zinc-500 text-sm font-medium">
+                                            Based on <span class="text-zinc-700">
+                                                <%= utensil.review_count || 245 %>
+                                            </span>
+                                            reviews
+                                        </p>
+                                    </div>
+
+                                    <!-- Rating bars -->
+                                    <div class="flex flex-col justify-center gap-3">
+                                        <% const ratingData=[{stars: 5, pct: 70}, {stars: 4, pct: 20}, {stars: 3, pct:
+                                            5}, {stars: 2, pct: 3}, {stars: 1, pct: 2}]; %>
+                                            <% ratingData.forEach(r=> { %>
+                                                <div class="flex items-center gap-3">
+                                                    <span
+                                                        class="text-sm font-medium text-zinc-600 w-14 flex items-center gap-1">
+                                                        <%= r.stars %> <i
+                                                                class="fas fa-star text-amber-400 text-[10px]"></i>
+                                                    </span>
+                                                    <div class="flex-1 bg-zinc-100 rounded-full h-2.5 overflow-hidden">
+                                                        <div class="anim-progress-fill bg-gradient-to-r from-amber-400 to-amber-500 h-2.5 rounded-full"
+                                                            style="width: <%= r.pct %>%; animation-delay: <%= r.stars * 0.1 %>s;">
+                                                        </div>
+                                                    </div>
+                                                    <span class="text-xs font-medium text-zinc-400 w-10 text-right">
+                                                        <%= r.pct %>%
+                                                    </span>
+                                                </div>
+                                                <% }) %>
+                                    </div>
+                                </div>
+
+                                <!-- Reviews Header -->
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="font-bold text-xl text-zinc-800">Customer Reviews</h3>
+                                    <button
+                                        class="text-sm font-semibold text-amber-600 hover:text-amber-700 flex items-center gap-1.5 transition cursor-pointer bg-transparent border-none">
+                                        <i class="fa-solid fa-pen-to-square text-xs"></i> Write a Review
+                                    </button>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <!-- Review 1 -->
+                                    <div
+                                        class="bg-white border border-zinc-100 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-200 hover:shadow-lg hover:shadow-zinc-100/50 hover:-translate-y-0.5">
+                                        <div class="flex items-start gap-4">
+                                            <div
+                                                class="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
+                                                KW</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                                    <div>
+                                                        <span class="font-semibold text-zinc-800">Kristin Watson</span>
+                                                        <span
+                                                            class="ml-2 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <i class="fa-solid fa-circle-check text-[8px]"></i> Verified
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-xs text-zinc-400">1 month ago</span>
+                                                </div>
+                                                <div class="flex text-amber-400 text-sm my-2 gap-0.5">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i>
+                                                </div>
+                                                <p class="text-zinc-500 text-sm leading-relaxed">
+                                                    Love it! This chef knife is incredibly sharp and well-balanced.
+                                                    Exactly
+                                                    what I was looking for.
+                                                    The handle feels great in hand and the quality is outstanding for
+                                                    the
+                                                    price.
+                                                </p>
+                                                <div class="flex items-center gap-4 mt-3">
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-amber-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-thumbs-up"></i> Helpful (12)
+                                                    </button>
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-zinc-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-flag"></i> Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review 2 -->
+                                    <div
+                                        class="bg-white border border-zinc-100 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-200 hover:shadow-lg hover:shadow-zinc-100/50 hover:-translate-y-0.5">
+                                        <div class="flex items-start gap-4">
+                                            <div
+                                                class="w-11 h-11 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
+                                                BC</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                                    <div>
+                                                        <span class="font-semibold text-zinc-800">Bessie Cooper</span>
+                                                        <span
+                                                            class="ml-2 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <i class="fa-solid fa-circle-check text-[8px]"></i> Verified
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-xs text-zinc-400">2 months ago</span>
+                                                </div>
+                                                <div class="flex text-amber-400 text-sm my-2 gap-0.5">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i>
+                                                </div>
+                                                <p class="text-zinc-500 text-sm leading-relaxed">
+                                                    Excellent product! The ergonomic handle makes it comfortable for
+                                                    long
+                                                    prep sessions.
+                                                    Highly recommend to anyone upgrading their kitchen tools.
+                                                </p>
+                                                <div class="flex items-center gap-4 mt-3">
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-amber-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-thumbs-up"></i> Helpful (8)
+                                                    </button>
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-zinc-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-flag"></i> Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review 3 -->
+                                    <div
+                                        class="bg-white border border-zinc-100 rounded-2xl p-5 transition-all duration-300 hover:border-zinc-200 hover:shadow-lg hover:shadow-zinc-100/50 hover:-translate-y-0.5">
+                                        <div class="flex items-start gap-4">
+                                            <div
+                                                class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center font-bold text-sm text-white shrink-0">
+                                                JM</div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between flex-wrap gap-2">
+                                                    <div>
+                                                        <span class="font-semibold text-zinc-800">James Mwangi</span>
+                                                        <span
+                                                            class="ml-2 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+                                                            <i class="fa-solid fa-circle-check text-[8px]"></i> Verified
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-xs text-zinc-400">3 months ago</span>
+                                                </div>
+                                                <div class="flex text-amber-400 text-sm my-2 gap-0.5">
+                                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="fas fa-star"></i><i class="fas fa-star"></i><i
+                                                        class="far fa-star text-zinc-300"></i>
+                                                </div>
+                                                <p class="text-zinc-500 text-sm leading-relaxed">
+                                                    Great utensil overall. Very solid build quality and arrived
+                                                    well-packaged.
+                                                    Only giving 4 stars because the delivery took a bit longer than
+                                                    expected, but the product itself is top-notch.
+                                                </p>
+                                                <div class="flex items-center gap-4 mt-3">
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-amber-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-thumbs-up"></i> Helpful (5)
+                                                    </button>
+                                                    <button
+                                                        class="text-xs text-zinc-400 hover:text-zinc-600 flex items-center gap-1 transition cursor-pointer bg-transparent border-none">
+                                                        <i class="fa-regular fa-flag"></i> Report
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Load more -->
+                                <div class="text-center mt-8">
+                                    <button
+                                        class="inline-flex items-center gap-2 px-6 py-3 border border-zinc-200 rounded-xl text-sm font-semibold text-zinc-600 hover:border-amber-400 hover:text-amber-600 hover:bg-amber-50/50 transition-all duration-200 cursor-pointer bg-transparent">
+                                        <i class="fa-solid fa-arrow-rotate-right text-xs"></i> Load More Reviews
+                                    </button>
+                                </div>
+                            </div>

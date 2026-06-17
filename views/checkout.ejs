@@ -80,314 +80,345 @@
 
     <%- include("../partials/header.ejs") %>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-        <!-- Page Header -->
-        <div class="mb-12">
-            <h1 class="text-4xl font-bold text-zinc-900 tracking-tight">Checkout</h1>
-            <p class="text-zinc-500 mt-2 font-light">Complete your details and confirm your order.</p>
-        </div>
-
-        <div class="flex flex-col lg:flex-row gap-8">
-
-            <!-- CHECKOUT FORM -->
-            <div class="lg:w-2/3 space-y-6">
-
-                <!-- Contact & Delivery -->
-                <div class="bg-white border border-zinc-200 rounded-3xl p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-truck text-amber-600"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-zinc-900">Delivery Details</h2>
-                            <p class="text-sm text-zinc-400">Where should we send your order?</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="md:col-span-2">
-                            <label for="name" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Full Name</label>
-                            <input id="name" type="text" value="<%= user?.name || '' %>" placeholder="John Doe" class="checkout-input">
-                        </div>
-                        <div>
-                            <label for="phone" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Phone</label>
-                            <input id="phone" type="tel" value="<%= user?.phone || '' %>" placeholder="07XX XXX XXX" class="checkout-input">
-                        </div>
-                        <div>
-                            <label for="email" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Email</label>
-                            <input id="email" type="email" value="<%= user?.email || '' %>" placeholder="you@example.com" class="checkout-input">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="address" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Street Address</label>
-                            <input id="address" type="text" placeholder="Building, street, landmark" class="checkout-input">
-                        </div>
-                        <div>
-                            <label for="county" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">County</label>
-                            <input id="county" type="text" placeholder="Nairobi" class="checkout-input">
-                        </div>
-                        <div>
-                            <label for="city" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">City / Town</label>
-                            <input id="city" type="text" placeholder="Westlands" class="checkout-input">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="notes" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Order Notes <span class="font-normal normal-case tracking-normal text-zinc-300">(optional)</span></label>
-                            <textarea id="notes" rows="3" placeholder="Delivery instructions or special requests"
-                                class="checkout-input resize-none"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment -->
-                <div class="bg-white border border-zinc-200 rounded-3xl p-6 md:p-8">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
-                            <i class="fa-solid fa-credit-card text-amber-600"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-bold text-zinc-900">Payment Method</h2>
-                            <p class="text-sm text-zinc-400">Choose how you'd like to pay</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3 mb-6">
-                        <button type="button" id="mpesaBtn" onclick="setPayment('mpesa')" class="payment-btn active">
-                            <i class="fa-solid fa-mobile-screen-button mr-2"></i>M-Pesa
-                        </button>
-                        <button type="button" id="cardBtn" onclick="setPayment('card')" class="payment-btn">
-                            <i class="fa-regular fa-credit-card mr-2"></i>Card
-                        </button>
-                    </div>
-
-                    <div id="mpesaBox" class="space-y-2">
-                        <label for="mpesaPhone" class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">M-Pesa Phone Number</label>
-                        <input id="mpesaPhone" type="tel" placeholder="07XX XXX XXX" class="checkout-input">
-                        <p class="text-xs text-zinc-400 flex items-center gap-2 mt-2">
-                            <i class="fa-solid fa-circle-info text-amber-500"></i>
-                            We will send an STK push to your phone
-                        </p>
-                    </div>
-
-                    <div id="cardBox" class="hidden space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Card Number</label>
-                            <input type="text" placeholder="1234 5678 9012 3456" class="checkout-input">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Expiry</label>
-                                <input type="text" placeholder="MM/YY" class="checkout-input">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">CVV</label>
-                                <input type="text" placeholder="123" class="checkout-input">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Back link (mobile-friendly placement) -->
-                <div class="lg:hidden">
-                    <a href="/cart"
-                        class="text-amber-600 font-semibold flex items-center gap-2 hover:translate-x-[-4px] transition-transform">
-                        <i class="fa-solid fa-arrow-left text-xs"></i>
-                        Back to Cart
-                    </a>
-                </div>
+            <!-- Page Header -->
+            <div class="mb-12">
+                <h1 class="text-4xl font-bold text-zinc-900 tracking-tight">Checkout</h1>
+                <p class="text-zinc-500 mt-2 font-light">Complete your details and confirm your order.</p>
             </div>
 
-            <!-- ORDER SUMMARY -->
-            <div class="lg:w-1/3">
-                <div class="bg-white border border-zinc-200 rounded-3xl p-8 sticky top-12 shadow-xl shadow-zinc-100">
+            <div class="flex flex-col lg:flex-row gap-8">
 
-                    <h2 class="text-2xl font-bold text-zinc-900 mb-6">Order Summary</h2>
+                <!-- CHECKOUT FORM -->
+                <div class="lg:w-2/3 space-y-6">
 
-                    <!-- Items -->
-                    <div class="space-y-4 mb-6 max-h-64 overflow-y-auto pr-1">
-                        <% cart.forEach(item => { %>
-                            <div class="flex items-center gap-3">
-                                <img src="<%= item.image_url %>" alt="<%= item.name %>"
-                                    class="h-14 w-14 object-cover rounded-xl border border-zinc-100 shrink-0">
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-semibold text-zinc-900 text-sm truncate"><%= item.name %></p>
-                                    <p class="text-xs text-zinc-400">Qty: <%= item.quantity %></p>
+                    <!-- Contact & Delivery -->
+                    <div class="bg-white border border-zinc-200 rounded-3xl p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-truck text-amber-600"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-zinc-900">Delivery Details</h2>
+                                <p class="text-sm text-zinc-400">Where should we send your order?</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label for="name"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Full
+                                    Name</label>
+                                <input id="name" type="text" value="<%= user?.name || '' %>" placeholder="John Doe"
+                                    class="checkout-input">
+                            </div>
+                            <div>
+                                <label for="phone"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Phone</label>
+                                <input id="phone" type="tel" value="<%= user?.phone || '' %>" placeholder="07XX XXX XXX"
+                                    class="checkout-input">
+                            </div>
+                            <div>
+                                <label for="email"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Email</label>
+                                <input id="email" type="email" value="<%= user?.email || '' %>"
+                                    placeholder="you@example.com" class="checkout-input">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="address"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Street
+                                    Address</label>
+                                <input id="address" type="text" placeholder="Building, street, landmark"
+                                    class="checkout-input">
+                            </div>
+                            <div>
+                                <label for="county"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">County</label>
+                                <input id="county" type="text" placeholder="Nairobi" class="checkout-input">
+                            </div>
+                            <div>
+                                <label for="city"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">City /
+                                    Town</label>
+                                <input id="city" type="text" placeholder="Westlands" class="checkout-input">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="notes"
+                                    class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Order
+                                    Notes <span
+                                        class="font-normal normal-case tracking-normal text-zinc-300">(optional)</span></label>
+                                <textarea id="notes" rows="3" placeholder="Delivery instructions or special requests"
+                                    class="checkout-input resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="bg-white border border-zinc-200 rounded-3xl p-6 md:p-8">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-credit-card text-amber-600"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-zinc-900">Payment Method</h2>
+                                <p class="text-sm text-zinc-400">Choose how you'd like to pay</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3 mb-6">
+                            <button type="button" id="mpesaBtn" onclick="setPayment('mpesa')"
+                                class="payment-btn active">
+                                <i class="fa-solid fa-mobile-screen-button mr-2"></i>M-Pesa
+                            </button>
+                            <button type="button" id="cardBtn" onclick="setPayment('card')" class="payment-btn">
+                                <i class="fa-regular fa-credit-card mr-2"></i>Card
+                            </button>
+                        </div>
+
+                        <div id="mpesaBox" class="space-y-2">
+                            <label for="mpesaPhone"
+                                class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">M-Pesa
+                                Phone Number</label>
+                            <input id="mpesaPhone" type="tel" placeholder="07XX XXX XXX" class="checkout-input">
+                            <p class="text-xs text-zinc-400 flex items-center gap-2 mt-2">
+                                <i class="fa-solid fa-circle-info text-amber-500"></i>
+                                We will send an STK push to your phone
+                            </p>
+                        </div>
+
+                        <div id="cardBox" class="hidden space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Card
+                                    Number</label>
+                                <input type="text" placeholder="1234 5678 9012 3456" class="checkout-input">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Expiry</label>
+                                    <input type="text" placeholder="MM/YY" class="checkout-input">
                                 </div>
-                                <span class="font-bold text-sm text-zinc-900 shrink-0">KES <%= (item.price * item.quantity).toLocaleString() %></span>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">CVV</label>
+                                    <input type="text" placeholder="123" class="checkout-input">
+                                </div>
                             </div>
-                        <% }) %>
-                    </div>
-
-                    <div class="space-y-4 mb-8 border-t border-zinc-100 pt-6">
-                        <div class="flex justify-between text-zinc-500">
-                            <span>Cart Subtotal</span>
-                            <span class="font-medium text-zinc-900">KES <%= subtotal.toLocaleString() %></span>
-                        </div>
-                        <div class="flex justify-between text-zinc-500">
-                            <span>Delivery (5%)</span>
-                            <span class="font-medium text-zinc-900">KES <%= shipping.toLocaleString() %></span>
-                        </div>
-                        <div class="border-t border-zinc-100 pt-4 flex justify-between">
-                            <span class="text-zinc-900 font-bold text-lg">Order Total</span>
-                            <span class="text-amber-600 font-bold text-2xl tracking-tight">KES <%= total.toLocaleString() %></span>
                         </div>
                     </div>
 
-                    <button type="button" onclick="placeOrder()"
-                        class="w-full bg-zinc-900 hover:bg-zinc-800 text-white py-4 rounded-2xl font-bold tracking-wide shadow-lg shadow-zinc-200 transition-all duration-200 active:scale-[0.98] mb-6">
-                        Place Order & Pay
-                    </button>
+                    <!-- Back link (mobile-friendly placement) -->
+                    <div class="lg:hidden">
+                        <a href="/cart"
+                            class="text-amber-600 font-semibold flex items-center gap-2 hover:translate-x-[-4px] transition-transform">
+                            <i class="fa-solid fa-arrow-left text-xs"></i>
+                            Back to Cart
+                        </a>
+                    </div>
+                </div>
 
-                    <a href="/cart"
-                        class="hidden lg:flex text-amber-600 font-semibold items-center gap-2 hover:translate-x-[-4px] transition-transform mb-6">
-                        <i class="fa-solid fa-arrow-left text-xs"></i>
-                        Back to Cart
-                    </a>
+                <!-- ORDER SUMMARY -->
+                <div class="lg:w-1/3">
+                    <div
+                        class="bg-white border border-zinc-200 rounded-3xl p-8 sticky top-12 shadow-xl shadow-zinc-100">
 
-                    <!-- Trust Badges -->
-                    <div class="grid grid-cols-2 gap-4 pt-6 border-t border-zinc-100">
-                        <div class="text-center">
-                            <i class="fa-solid fa-lock text-zinc-400 text-xs mb-1"></i>
-                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Secure Checkout</p>
+                        <h2 class="text-2xl font-bold text-zinc-900 mb-6">Order Summary</h2>
+
+                        <!-- Items -->
+                        <div class="space-y-4 mb-6 max-h-64 overflow-y-auto pr-1">
+                            <% cart.forEach(item=> { %>
+                                <div class="flex items-center gap-3">
+                                    <img src="<%= item.image_url %>" alt="<%= item.name %>"
+                                        class="h-14 w-14 object-cover rounded-xl border border-zinc-100 shrink-0">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-semibold text-zinc-900 text-sm truncate">
+                                            <%= item.name %>
+                                        </p>
+                                        <p class="text-xs text-zinc-400">Qty: <%= item.quantity %>
+                                        </p>
+                                    </div>
+                                    <span class="font-bold text-sm text-zinc-900 shrink-0">KES <%= (item.price *
+                                            item.quantity).toLocaleString() %></span>
+                                </div>
+                                <% }) %>
                         </div>
-                        <div class="text-center">
-                            <i class="fa-solid fa-rotate-left text-zinc-400 text-xs mb-1"></i>
-                            <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Easy Returns</p>
+
+                        <div class="space-y-4 mb-8 border-t border-zinc-100 pt-6">
+                            <div class="flex justify-between text-zinc-500">
+                                <span>Cart Subtotal</span>
+                                <span class="font-medium text-zinc-900">KES <%= subtotal.toLocaleString() %></span>
+                            </div>
+                            <div class="flex justify-between text-zinc-500">
+                                <span>Delivery (5%)</span>
+                                <span class="font-medium text-zinc-900">KES <%= shipping.toLocaleString() %></span>
+                            </div>
+                            <div class="border-t border-zinc-100 pt-4 flex justify-between">
+                                <span class="text-zinc-900 font-bold text-lg">Order Total</span>
+                                <span class="text-amber-600 font-bold text-2xl tracking-tight">KES <%=
+                                        total.toLocaleString() %></span>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="placeOrder()"
+                            class="w-full bg-zinc-900 hover:bg-zinc-800 text-white py-4 rounded-2xl font-bold tracking-wide shadow-lg shadow-zinc-200 transition-all duration-200 active:scale-[0.98] mb-6">
+                            Place Order & Pay
+                        </button>
+
+                        <a href="/cart"
+                            class="hidden lg:flex text-amber-600 font-semibold items-center gap-2 hover:translate-x-[-4px] transition-transform mb-6">
+                            <i class="fa-solid fa-arrow-left text-xs"></i>
+                            Back to Cart
+                        </a>
+
+                        <!-- Trust Badges -->
+                        <div class="grid grid-cols-2 gap-4 pt-6 border-t border-zinc-100">
+                            <div class="text-center">
+                                <i class="fa-solid fa-lock text-zinc-400 text-xs mb-1"></i>
+                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Secure Checkout
+                                </p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa-solid fa-rotate-left text-zinc-400 text-xs mb-1"></i>
+                                <p class="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Easy Returns
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
+        </main>
 
-        </div>
-    </main>
-
-    <!-- Loading Modal -->
-    <div id="checkoutModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-zinc-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-10 text-center shadow-2xl max-w-sm mx-4">
-            <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-600"></i>
+        <!-- Loading Modal -->
+        <div id="checkoutModal"
+            class="fixed inset-0 z-[100] hidden items-center justify-center bg-zinc-900/60 backdrop-blur-sm">
+            <div class="bg-white rounded-3xl p-10 text-center shadow-2xl max-w-sm mx-4">
+                <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl text-amber-600"></i>
+                </div>
+                <p id="modalMessage" class="text-zinc-900 font-semibold text-lg">Processing...</p>
             </div>
-            <p id="modalMessage" class="text-zinc-900 font-semibold text-lg">Processing...</p>
         </div>
-    </div>
 
-    <script>
-        let paymentMethod = 'mpesa';
+        <script>
+            let paymentMethod = 'mpesa';
 
-        function setPayment(method) {
-            paymentMethod = method;
+            function setPayment(method) {
+                paymentMethod = method;
 
-            document.getElementById('mpesaBox').classList.toggle('hidden', method !== 'mpesa');
-            document.getElementById('cardBox').classList.toggle('hidden', method !== 'card');
-            document.getElementById('mpesaBtn').classList.toggle('active', method === 'mpesa');
-            document.getElementById('cardBtn').classList.toggle('active', method === 'card');
-        }
-
-        function showModal(message) {
-            document.getElementById('modalMessage').textContent = message;
-            const modal = document.getElementById('checkoutModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function hideModal() {
-            const modal = document.getElementById('checkoutModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        async function placeOrder() {
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const county = document.getElementById('county').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const mpesaPhone = document.getElementById('mpesaPhone').value.trim();
-
-            if (!name || !phone || !address || !county || !city) {
-                alert('Please fill in all required delivery fields.');
-                return;
+                document.getElementById('mpesaBox').classList.toggle('hidden', method !== 'mpesa');
+                document.getElementById('cardBox').classList.toggle('hidden', method !== 'card');
+                document.getElementById('mpesaBtn').classList.toggle('active', method === 'mpesa');
+                document.getElementById('cardBtn').classList.toggle('active', method === 'card');
             }
 
-            if (paymentMethod === 'mpesa' && !mpesaPhone && !phone) {
-                alert('Please enter your M-Pesa phone number.');
-                return;
+            function showModal(message) {
+                document.getElementById('modalMessage').textContent = message;
+                const modal = document.getElementById('checkoutModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
             }
 
-            const payload = {
-                name,
-                phone,
-                email: document.getElementById('email').value.trim(),
-                address,
-                county,
-                city,
-                notes: document.getElementById('notes').value.trim(),
-                payment_method: paymentMethod,
-                mpesa_phone: mpesaPhone || phone
-            };
+            function hideModal() {
+                const modal = document.getElementById('checkoutModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
 
-            showModal('Creating order...');
+            async function placeOrder() {
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const address = document.getElementById('address').value.trim();
+                const county = document.getElementById('county').value.trim();
+                const city = document.getElementById('city').value.trim();
+                const mpesaPhone = document.getElementById('mpesaPhone').value.trim();
 
-            try {
-                const res = await fetch('/checkout/place-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-
-                if (!res.ok || !data.success) {
-                    hideModal();
-                    alert(data.error || 'Checkout failed. Please try again.');
+                if (!name || !phone || !address || !county || !city) {
+                    alert('Please fill in all required delivery fields.');
                     return;
                 }
 
-                if (data.payment_method === 'mpesa') {
-                    showModal('STK Push sent. Enter your M-Pesa PIN on your phone...');
-                    await pollPaymentStatus(data.orderId);
+                if (paymentMethod === 'mpesa' && !mpesaPhone && !phone) {
+                    alert('Please enter your M-Pesa phone number.');
                     return;
                 }
 
-                showModal('Payment confirmed! Redirecting...');
-                await sleep(1000);
-                window.location.href = `/order-success/${data.orderId}`;
-            } catch (err) {
-                hideModal();
-                alert('Something went wrong. Please try again.');
-            }
-        }
+                const payload = {
+                    name,
+                    phone,
+                    email: document.getElementById('email').value.trim(),
+                    address,
+                    county,
+                    city,
+                    notes: document.getElementById('notes').value.trim(),
+                    payment_method: paymentMethod,
+                    mpesa_phone: mpesaPhone || phone
+                };
 
-        async function pollPaymentStatus(orderId, maxAttempts = 40) {
-            for (let i = 0; i < maxAttempts; i++) {
-                await sleep(3000);
+                showModal('Creating order...');
 
                 try {
-                    const res = await fetch(`/checkout/order-status/${orderId}`);
+                    const res = await fetch('/checkout/place-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
                     const data = await res.json();
 
-                    if (data.payment_status === 'paid') {
-                        showModal('Payment confirmed! Redirecting...');
-                        await sleep(1000);
-                        window.location.href = `/order-success/${orderId}`;
+                    if (!res.ok || !data.success) {
+                        hideModal();
+                        alert(data.error || 'Checkout failed. Please try again.');
                         return;
                     }
+
+                    if (data.payment_method === 'mpesa') {
+                        showModal('STK Push sent. Enter your M-Pesa PIN on your phone...');
+                        await pollPaymentStatus(data.orderId);
+                        return;
+                    }
+
+                    showModal('Payment confirmed! Redirecting...');
+                    await sleep(1000);
+                    window.location.href = `/order-success/${data.orderId}`;
                 } catch (err) {
-                    // keep polling
+                    hideModal();
+                    alert('Something went wrong. Please try again.');
                 }
             }
 
-            showModal('Payment still pending. Redirecting to order details...');
-            await sleep(1500);
-            window.location.href = `/order-success/${orderId}`;
-        }
+            async function pollPaymentStatus(orderId, maxAttempts = 40) {
+                for (let i = 0; i < maxAttempts; i++) {
+                    await sleep(3000);
 
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-    </script>
+                    try {
+                        const res = await fetch(`/checkout/order-status/${orderId}`);
+                        const data = await res.json();
 
-    <%- include("../partials/toastr") %>
-    <%- include("../partials/footer") %>
+                        if (data.payment_status === 'paid') {
+                            showModal('Payment confirmed! Redirecting...');
+                            await sleep(1000);
+                            window.location.href = `/order-success/${orderId}`;
+                            return;
+                        }
+                    } catch (err) {
+                        // keep polling
+                    }
+                }
+
+                showModal('Payment still pending. Redirecting to order details...');
+                await sleep(1500);
+                window.location.href = `/order-success/${orderId}`;
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        </script>
+
+        <%- include("../partials/toastr") %>
+            <%- include("../partials/footer") %>
 </body>
 
 </html>

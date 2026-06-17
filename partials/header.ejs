@@ -100,16 +100,16 @@
                 <li><a href="/all-utensils"
                         class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">All
                         Utensils</a></li>
-                <li><a href="/cookware"
+                <li><a href="/all-utensils?category=cookware"
                         class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Cookware</a>
                 </li>
-                <li><a href="/knives"
+                <li><a href="/all-utensils?category=knives"
                         class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Knives</a>
                 </li>
-                <li><a href="/storage"
+                <li><a href="/all-utensils?category=storage"
                         class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Storage</a>
                 </li>
-                <li><a href="/dining"
+                <li><a href="/all-utensils?category=dining"
                         class="block px-4 py-2 text-white/90 hover:text-white hover:bg-black/20 rounded-lg transition">Dining</a>
                 </li>
                 <li><a href="/offers"
@@ -120,7 +120,7 @@
                 <p>Welcome <%= user.name %>
                 </p>
                 <% } else { %>
-                    <button>Login</button>
+                    <a href="/login">Login</a>
                     <% } %>
         </div>
     </div>
@@ -153,10 +153,10 @@
     <div class="p-5 items-center justify-center">
         <ul class="space-y-2 text-sm">
             <li><a href="/all-utensils" class="block px-4 py-3 text-amber-400 ">All Utensils</a></li>
-            <li><a href="/cookware" class="block px-4 py-3 text-amber-400 ">Cookware</a></li>
-            <li><a href="/knives" class="block px-4 py-3 text-amber-400 ">Knives</a></li>
-            <li><a href="/storage" class="block px-4 py-3 text-amber-400 ">Storage</a></li>
-            <li><a href="/dining" class="block px-4 py-3 text-amber-400 ">Dining</a></li>
+            <li><a href="/all-utensils?category=cookware" class="block px-4 py-3 text-amber-400 ">Cookware</a></li>
+            <li><a href="/all-utensils?category=knives" class="block px-4 py-3 text-amber-400 ">Knives</a></li>
+            <li><a href="/all-utensils?category=storage" class="block px-4 py-3 text-amber-400 ">Storage</a></li>
+            <li><a href="/all-utensils?category=dining" class="block px-4 py-3 text-amber-400 ">Dining</a></li>
             <li><a href="/offers" class="block px-4 py-3 text-amber-400">Special Offers</a></li>
 
         </ul>

@@ -16,4 +16,7 @@ const pool = new Pool({
         rejectUnauthorized: false
     }
 })
+pool.on('connect', (client)=>{
+    client.query('SET search_path TO public')
+})
 export default pool;

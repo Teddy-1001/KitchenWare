@@ -1,78 +1,86 @@
-import express from 'express';
-import pool from './db/config.js';
-import dotenv from 'dotenv';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import cookieParser from 'cookie-parser';
-import { auth } from './middleware/auth.js';
-import session from 'express-session';
-import { admin } from './middleware/admin.js';
-import axios from 'axios';
-import { stkPush } from './public/js/mpesa_push.js';
-import upload from './middleware/upload.js';
-import cloudinary from './db/cloudinary.js';
-import { fileURLToPath } from 'url';
-import path from 'path';
+import express from "express";
+import pool from "./db/config.js";
+import dotenv from "dotenv";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
+import { auth } from "./middleware/auth.js";
+import session from "express-session";
+import { admin } from "./middleware/admin.js";
+import axios from "axios";
+import { stkPush } from "./public/js/mpesa_push.js";
+import upload from "./middleware/upload.js";
+import cloudinary from "./db/cloudinary.js";
+import { fileURLToPath } from "url";
+import path from "path";
 
 dotenv.config();
 const app = express();
 
-const calcShipping = (subtotal) => (subtotal > 0 ? Math.round(subtotal * 0.05) : 0);
+const calcShipping = (subtotal) =>
+    subtotal > 0 ? Math.round(subtotal * 0.05) : 0;
 
 const calcOrderTotals = (cart) => {
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const subtotal = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0,
+    );
     const shipping = calcShipping(subtotal);
     return { subtotal, shipping, total: subtotal + shipping };
 };
 
 const formatPhone = (phone) => {
     if (!phone) return phone;
-    const cleaned = String(phone).replace(/\s+/g, '');
-    if (cleaned.startsWith('0')) return '254' + cleaned.substring(1);
-    if (cleaned.startsWith('+')) return cleaned.substring(1);
+    const cleaned = String(phone).replace(/\s+/g, "");
+    if (cleaned.startsWith("0")) return "254" + cleaned.substring(1);
+    if (cleaned.startsWith("+")) return cleaned.substring(1);
     return cleaned;
 };
 
 const syncCartCookie = (req, res) => {
     if (!req.session?.cart?.length) {
-        res.clearCookie('cart');
+        res.clearCookie("cart");
         return;
     }
-    res.cookie('cart', JSON.stringify(req.session.cart), {
+    res.cookie("cart", JSON.stringify(req.session.cart), {
         maxAge: 1000 * 60 * 60 * 24 * 7,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
     });
 };
 
 const clearCart = (req, res) => {
     req.session.cart = [];
-    res.clearCookie('cart');
+    res.clearCookie("cart");
 };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const viewsPath = path.join(__dirname, 'views');
-const publicPath = path.join(__dirname, 'public');
+const viewsPath = path.join(__dirname, "views");
+const publicPath = path.join(__dirname, "public");
 
-app.set('view engine', 'ejs');
-app.set('views', viewsPath);
+app.set("view engine", "ejs");
+app.set("views", viewsPath);
 app.use(express.static(publicPath));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(session({
-    secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'dev-session-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
-    }
-}))
-
+app.use(
+    session({
+        secret:
+            process.env.SESSION_SECRET ||
+            process.env.JWT_SECRET ||
+            "dev-session-secret",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 1000 * 60 * 60 * 24,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+        },
+    }),
+);
 
 app.use((req, res, next) => {
     // 1. Restore cart from cookie if it exists and session is empty
@@ -98,7 +106,7 @@ app.use((req, res, next) => {
             req.user = decoded;
             res.locals.user = decoded;
         } catch (error) {
-            res.clearCookie('token');
+            res.clearCookie("token");
             req.user = null;
             res.locals.user = null;
         }
@@ -137,24 +145,23 @@ app.use((req, res, next) => {
     next();
 });
 
-pool.connect().then(() => {
-    console.log('Connected to the database');
-})
+pool
+    .connect()
+    .then(() => {
+        console.log("Connected to the database");
+    })
     .catch((err) => {
-        console.error('Error connecting to the database', err);
+        console.error("Error connecting to the database", err);
     });
 
-
-
-app.get('/', auth, (req, res) => {
-
+app.get("/", auth, (req, res) => {
     // if (!token) {
     //     return res.redirect('/login');
     // }
-    console.log(req.user)
-    res.render('index', { user: req.user });
-})
-app.get('/all-utensils', async (req, res) => {
+    console.log(req.user);
+    res.render("index", { user: req.user });
+});
+app.get("/all-utensils", async (req, res) => {
     // const utensils = [
     //     {
     //         name: "Chef Knife",
@@ -180,98 +187,96 @@ app.get('/all-utensils', async (req, res) => {
     //         image: "/images/pexels-keeganjchecks-10117711.jpg"
     //     }
     // ];
-    const category = req.query.category || 'All';
+    const category = req.query.category || "All";
     try {
         let result;
-        if (category === 'All') {
-            result = await pool.query('SELECT utensils.*, categories.name AS category_name FROM utensils JOIN categories ON utensils.category_id = categories.id');
+        if (category === "All") {
+            result = await pool.query(
+                "SELECT utensils.*, categories.name AS category_name FROM utensils JOIN categories ON utensils.category_id = categories.id",
+            );
         } else {
-            result = await pool.query(`SELECT utensils.*, categories.name AS category_name
+            result = await pool.query(
+                `SELECT utensils.*, categories.name AS category_name
                 FROM utensils
                 JOIN categories ON utensils.category_id = categories.id
                 WHERE categories.name = $1
-            `, [category]);
+            `,
+                [category],
+            );
         }
-        res.render('all-utensils', {
+        res.render("all-utensils", {
             utensils: result.rows,
             cart: req.session.cart || [],
             category,
-            user: req.user || null
+            user: req.user || null,
         });
     } catch (error) {
         console.error(error);
-        res.render('all-utensils', {
+        res.render("all-utensils", {
             utensils: [],
             category,
             user: req.user || null,
-            error: 'Something went wrong while fetching utensils'
+            error: "Something went wrong while fetching utensils",
         });
     }
+});
+app.get("/register", async (req, res) => {
+    res.render("register");
+});
 
-})
-app.get('/register', async (req, res) => {
-    res.render('register');
-})
-
-app.post('/register', async (req, res) => {
+app.post("/register", async (req, res) => {
     const { email, password, name, phone } = req.body;
     try {
         // if user already exist
-        const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+            email,
+        ]);
         if (user.rows.length > 0) {
-            return res.render('register', { error: 'User already exists' });
+            return res.render("register", { error: "User already exists" });
         }
         //hash password
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const emails = await pool.query('SELECT email FROM admins');
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const emails = await pool.query("SELECT email FROM admins");
 
         const adminCheck = await pool.query(
-            'SELECT 1 FROM admins WHERE email = $1',
-            [email]
+            "SELECT 1 FROM admins WHERE email = $1",
+            [email],
         );
 
-        const role =
-            adminCheck.rows.length > 0
-                ? 'admin'
-                : 'customer';
+        const role = adminCheck.rows.length > 0 ? "admin" : "customer";
 
         const newUser = await pool.query(
-            'INSERT INTO users (email, password, name, phone, role) VALUES ($1, $2, $3, $4, $5)',
-            [email, hashedPassword, name, phone, role]
+            "INSERT INTO users (email, password, name, phone, role) VALUES ($1, $2, $3, $4, $5)",
+            [email, hashedPassword, name, phone, role],
         );
         // return res.render('register', {
         //     success: "User registered successfully",
         //     error: null
         // });
-        return res.redirect('/login')
-
+        return res.redirect("/login");
     } catch (error) {
         console.error(error);
-        res.render('register', {
-            error: 'Something went wrong',
-            success: null
+        res.render("register", {
+            error: "Something went wrong",
+            success: null,
         });
     }
-})
+});
 
-app.get('/login', async (req, res) => {
-    const hash = await bcrypt.hash("12345678", 10);
-
-    console.log(hash);
-    res.render('login');
-})
-app.post('/login', async (req, res) => {
+app.get("/login", async (req, res) => {
+    res.render("login");
+});
+app.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const result = await pool.query(
-            'SELECT * FROM users WHERE email = $1',
-            [email]
-        );
+        const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+            email,
+        ]);
 
         if (result.rows.length === 0) {
-            return res.render('login', {
-                error: 'Invalid email or password'
+            return res.render("login", {
+                error: "Invalid email or password",
             });
         }
 
@@ -281,78 +286,76 @@ app.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            console.log('not matching');
-            return res.render('login', {
-                error: 'Invalid email or password'
+            console.log("not matching");
+            return res.render("login", {
+                error: "Invalid email or password",
             });
         }
 
         const token = jwt.sign(
             { userId: user.id, email: user.email, name: user.name, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: "1h" },
         );
 
-        res.cookie('token', token, {
+        res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 3600000
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 3600000,
         });
 
-        return res.redirect('/');
-
+        return res.redirect("/");
     } catch (error) {
         console.error(error);
-        return res.render('login', {
-            error: 'Something went wrong'
+        return res.render("login", {
+            error: "Something went wrong",
         });
     }
 });
 
-app.post('/logout', (req, res) => {
+app.post("/logout", (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
     });
 
-    res.redirect('/login');
-})
+    res.redirect("/login");
+});
 //add to cart
-app.post('/cart/add', async (req, res) => {
-    const { id, quantity, redirect } = req.body
-    const qty = Math.max(1, parseInt(quantity) || 1)
+app.post("/cart/add", async (req, res) => {
+    const { id, quantity, redirect } = req.body;
+    const qty = Math.max(1, parseInt(quantity) || 1);
     try {
-
-        const result = await pool.query(
-            'SELECT * FROM utensils WHERE id = $1', [id]
-        )
-        const item = result.rows[0]
+        const result = await pool.query("SELECT * FROM utensils WHERE id = $1", [
+            id,
+        ]);
+        const item = result.rows[0];
         if (!item) {
-            return res.status(404).send('Item not found')
+            return res.status(404).send("Item not found");
         }
         //check if already in cart
-        const existing = req.session.cart.find(p => p.id === item.id)
+        const existing = req.session.cart.find((p) => p.id === item.id);
         if (existing) {
-            existing.quantity += qty
+            existing.quantity += qty;
         } else {
             req.session.cart.push({
                 id: item.id,
                 name: item.name,
                 price: Number(item.price),
                 image_url: item.image_url,
-                quantity: qty
-            })
+                quantity: qty,
+            });
         }
 
         // Redirect logic: to checkout if Buy Now, else referrer page with cart_open=true
-        let safeDest = '/all-utensils';
-        if (redirect && redirect.startsWith('/') && !redirect.startsWith('//')) {
+        let safeDest = "/all-utensils";
+        if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) {
             safeDest = redirect;
-        } else if (req.get('referer')) {
+        } else if (req.get("referer")) {
             try {
-                const refUrl = new URL(req.get('referer'));
-                if (refUrl.host === req.get('host')) {
+                const refUrl = new URL(req.get("referer"));
+                if (refUrl.host === req.get("host")) {
                     safeDest = refUrl.pathname + refUrl.search;
                 }
             } catch (e) {
@@ -360,86 +363,90 @@ app.post('/cart/add', async (req, res) => {
             }
         }
 
-        if (safeDest !== '/checkout') {
+        if (safeDest !== "/checkout") {
             // Append ?cart_open=true, ensuring we don't duplicate it
-            safeDest = safeDest.replace(/[?&]cart_open=true/, '');
-            const finalSeparator = safeDest.includes('?') ? '&' : '?';
-            safeDest = safeDest + finalSeparator + 'cart_open=true';
+            safeDest = safeDest.replace(/[?&]cart_open=true/, "");
+            const finalSeparator = safeDest.includes("?") ? "&" : "?";
+            safeDest = safeDest + finalSeparator + "cart_open=true";
         }
 
-        res.redirect(safeDest)
+        res.redirect(safeDest);
     } catch (error) {
         console.error(error);
-        res.send('Error adding to cart');
+        res.send("Error adding to cart");
     }
-})
-app.get('/faqs',(req,res)=>{
-    console.log('faqqq')
-    return res.render('faqs');
+});
+app.get("/faqs", (req, res) => {
+    console.log("faqqq");
+    return res.render("faqs");
 });
 //view cart
-app.get('/cart', (req, res) => {
-    const cart = req.session.cart || []
-    const { subtotal: total, shipping: delivery, total: grandTotal } = calcOrderTotals(cart)
+app.get("/cart", (req, res) => {
+    const cart = req.session.cart || [];
+    const {
+        subtotal: total,
+        shipping: delivery,
+        total: grandTotal,
+    } = calcOrderTotals(cart);
     // console.log(cart)
-    res.render('cart', {
+    res.render("cart", {
         cart,
         total,
         delivery,
         grandTotal,
-        user: req.user
-    })
-})
+        user: req.user,
+    });
+});
 //increase quantity
-app.post('/cart/increase', (req, res) => {
-
-    const { id } = req.body
-    const cart = req.session.cart
-    const target = req.session.cart.find(
-        item => item.id === Number(id)
-    );
+app.post("/cart/increase", (req, res) => {
+    const { id } = req.body;
+    const cart = req.session.cart;
+    const target = req.session.cart.find((item) => item.id === Number(id));
     if (target) {
-        target.quantity += 1
+        target.quantity += 1;
     }
     // const destination = (redirect.)
-    res.redirect(req.get('referer'));
-})
+    res.redirect(req.get("referer"));
+});
 
 //decrease quantity
-app.post('/cart/decrease', (req, res) => {
-
-    const { id } = req.body
-    const cart = req.session.cart
-    const target = req.session.cart.find(
-        item => item.id === Number(id)
-    );
+app.post("/cart/decrease", (req, res) => {
+    const { id } = req.body;
+    const cart = req.session.cart;
+    const target = req.session.cart.find((item) => item.id === Number(id));
     if (target) {
-        target.quantity -= 1
+        target.quantity -= 1;
         if (target.quantity <= 0) {
-            req.session.cart = cart.filter(
-                item => item.id !== Number(id)
-            );
+            req.session.cart = cart.filter((item) => item.id !== Number(id));
         }
     }
-    res.redirect(req.get('referer'));
-})
+    res.redirect(req.get("referer"));
+});
 
 //remove from cart
-app.post('/cart/remove', (req, res) => {
-    const { id } = req.body
-    req.session.cart = req.session.cart.filter(item => item.id !== parseInt(id))
-    res.redirect('/cart')
-})
+app.post("/cart/remove", (req, res) => {
+    const { id } = req.body;
+    req.session.cart = req.session.cart.filter(
+        (item) => item.id !== parseInt(id),
+    );
+    res.redirect("/cart");
+});
 
 //clear cart
-app.post('/cart/clear', (req, res) => {
-    clearCart(req, res)
-    res.redirect('/cart')
-})
+app.post("/cart/clear", (req, res) => {
+    clearCart(req, res);
+    res.redirect("/cart");
+});
 //product detail
-app.get('/utensil/:id', async (req, res) => {
+app.get("/utensil/:id", async (req, res) => {
     const { id } = req.params;
-    const result = await pool.query(`SELECT 
+    const check = await pool.query(`
+SELECT current_database(), current_schema()
+`);
+
+    console.log(check.rows);
+    const result = await pool.query(
+        `SELECT 
       u.*,
       c.name AS category_name
     FROM utensils u
@@ -447,29 +454,83 @@ app.get('/utensil/:id', async (req, res) => {
     ON u.category_id = c.id
     WHERE u.id = $1
     `,
-        [id])
-    const utensil = result.rows[0]
+        [id],
+    );
+    const utensil = result.rows[0];
 
     if (!utensil) {
-        return res.status(404).send('Utensil not found');
+        return res.status(404).send("Utensil not found");
     }
 
-    const cartItem = (req.session.cart || []).find(item => item.id === Number(id));
+    const cartItem = (req.session.cart || []).find(
+        (item) => item.id === Number(id),
+    );
     const cartQuantity = cartItem?.quantity ?? 1;
 
-    console.log(utensil)
-    res.render('ProductDetail', { utensil, cartQuantity });
+    const reviews = await pool.query(
+        `
+        SELECT r.*, u.name AS customer_name FROM reviews r 
+        JOIN users u ON r.user_id = u.id WHERE r.product_id = $1 ORDER BY r.created_at DESC`,
+        [id],
+    );
 
-})
+    const stats = await pool.query(
+        `
+SELECT
+ROUND(AVG(rating),1) AS avg_rating,
+COUNT(*) AS total_reviews,
+
+COUNT(*) FILTER (WHERE rating = 5) AS five_star,
+COUNT(*) FILTER (WHERE rating = 4) AS four_star,
+COUNT(*) FILTER (WHERE rating = 3) AS three_star,
+COUNT(*) FILTER (WHERE rating = 2) AS two_star,
+COUNT(*) FILTER (WHERE rating = 1) AS one_star
+
+FROM reviews
+WHERE product_id = $1
+`,
+        [id],
+    );
+
+    const statsData = stats.rows[0];
+
+    const statsFormatted = {
+        avg_rating: Number(statsData.avg_rating) || 0,
+        total_reviews: Number(statsData.total_reviews) || 0,
+        five_star: Number(statsData.five_star) || 0,
+        four_star: Number(statsData.four_star) || 0,
+        three_star: Number(statsData.three_star) || 0,
+        two_star: Number(statsData.two_star) || 0,
+        one_star: Number(statsData.one_star) || 0,
+    };
+
+    // console.log(stats.rows)
+
+    console.log("sending to ejs:", {
+        utensil,
+        cartQuantity,
+        reviews: reviews.rows,
+        stats: statsFormatted,
+    });
+    res.render("ProductDetail", {
+        utensil,
+        cartQuantity,
+        reviews: reviews?.rows,
+        stats: statsFormatted,
+
+    });
+});
 
 //offers page
-app.get('/offers', async (req, res) => {
-    const category = req.query.category || 'All';
+app.get("/offers", async (req, res) => {
+    const category = req.query.category || "All";
     try {
         let result;
-        if (category === 'All') {
+        if (category === "All") {
             // SELECT * FROM utensils WHERE is_offer = TRUE;
-            result = await pool.query('SELECT utensils.*, categories.name AS category_name FROM utensils JOIN categories ON utensils.category_id = categories.id WHERE is_offer = TRUE');
+            result = await pool.query(
+                "SELECT utensils.*, categories.name AS category_name FROM utensils JOIN categories ON utensils.category_id = categories.id WHERE is_offer = TRUE",
+            );
         }
         // else {
         //     result = await pool.query(`SELECT utensils.*, categories.name AS category_name
@@ -478,22 +539,22 @@ app.get('/offers', async (req, res) => {
         //         WHERE categories.name = $1
         //     `, [category]);
         // }
-        res.render('offers', {
+        res.render("offers", {
             utensils: result.rows,
             cart: req.session.cart || [],
             category,
-            user: req.user || null
+            user: req.user || null,
         });
     } catch (error) {
         console.error(error);
-        res.render('offers', {
+        res.render("offers", {
             utensils: [],
             category,
             user: req.user || null,
-            error: 'Something went wrong while fetching utensils'
+            error: "Something went wrong while fetching utensils",
         });
     }
-})
+});
 
 // app.get('/checkout', (req, res) => {
 //     const cart = req.session.cart || []
@@ -504,27 +565,27 @@ app.get('/offers', async (req, res) => {
 //         cart
 //     })
 // })
-app.get('/checkout', (req, res) => {
+app.get("/checkout", (req, res) => {
     const cart = req.session.cart || [];
 
     if (!cart.length) {
-        return res.redirect('/cart');
+        return res.redirect("/cart");
     }
 
     const user = res.locals.user || null;
 
     const { subtotal, shipping, total } = calcOrderTotals(cart);
 
-    res.render('checkout', {
+    res.render("checkout", {
         cart,
         user,
         subtotal,
         shipping,
-        total
+        total,
     });
 });
 
-app.post('/checkout/place-order', async (req, res) => {
+app.post("/checkout/place-order", async (req, res) => {
     const {
         name,
         phone,
@@ -534,17 +595,25 @@ app.post('/checkout/place-order', async (req, res) => {
         city,
         notes,
         payment_method,
-        mpesa_phone
+        mpesa_phone,
     } = req.body;
 
     const cart = req.session.cart || [];
 
     if (!cart.length) {
-        return res.status(400).json({ error: 'Cart is empty' });
+        return res.status(400).json({ error: "Cart is empty" });
     }
 
-    if (!name?.trim() || !phone?.trim() || !address?.trim() || !county?.trim() || !city?.trim()) {
-        return res.status(400).json({ error: 'Please fill in all required delivery fields' });
+    if (
+        !name?.trim() ||
+        !phone?.trim() ||
+        !address?.trim() ||
+        !county?.trim() ||
+        !city?.trim()
+    ) {
+        return res
+            .status(400)
+            .json({ error: "Please fill in all required delivery fields" });
     }
 
     try {
@@ -569,8 +638,8 @@ app.post('/checkout/place-order', async (req, res) => {
                 `${address}, ${city}, ${county}`,
                 phone,
                 payment_method,
-                notes
-            ]
+                notes,
+            ],
         );
 
         const orderId = orderResult.rows[0].id;
@@ -580,40 +649,42 @@ app.post('/checkout/place-order', async (req, res) => {
                 `INSERT INTO order_items
                 (order_id, utensil_id, quantity, price)
                 VALUES ($1,$2,$3,$4)`,
-                [orderId, item.id, item.quantity, item.price]
+                [orderId, item.id, item.quantity, item.price],
             );
         }
 
-        if (payment_method === 'mpesa') {
+        if (payment_method === "mpesa") {
             const payPhone = formatPhone(mpesa_phone || phone);
             if (!payPhone) {
-                return res.status(400).json({ error: 'M-Pesa phone number is required' });
+                return res
+                    .status(400)
+                    .json({ error: "M-Pesa phone number is required" });
             }
 
             const stkResponse = await stkPush(payPhone, Math.round(total), orderId);
             console.log(stkResponse);
 
-            if (stkResponse.ResponseCode !== '0') {
+            if (stkResponse.ResponseCode !== "0") {
                 return res.status(400).json({
-                    error: stkResponse.ResponseDescription || 'M-Pesa STK push failed'
+                    error: stkResponse.ResponseDescription || "M-Pesa STK push failed",
                 });
             }
 
             const checkoutRequestId = stkResponse.CheckoutRequestID;
             await pool.query(
                 `UPDATE orders SET checkout_request_id = $1 WHERE id = $2`,
-                [checkoutRequestId, orderId]
+                [checkoutRequestId, orderId],
             );
 
             clearCart(req, res);
 
             return res.json({
                 success: true,
-                message: 'STK Push sent',
+                message: "STK Push sent",
                 orderId,
-                payment_method: 'mpesa',
+                payment_method: "mpesa",
                 merchantRequestId: stkResponse.MerchantRequestID,
-                checkoutRequestId
+                checkoutRequestId,
             });
         }
 
@@ -622,45 +693,43 @@ app.post('/checkout/place-order', async (req, res) => {
         return res.json({
             success: true,
             orderId,
-            payment_method: payment_method || 'card'
+            payment_method: payment_method || "card",
         });
-
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Checkout failed' });
+        res.status(500).json({ error: "Checkout failed" });
     }
 });
 
-app.get('/checkout/order-status/:id', async (req, res) => {
+app.get("/checkout/order-status/:id", async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT payment_status, payment_method, status FROM orders WHERE id = $1`,
-            [req.params.id]
+            [req.params.id],
         );
 
         if (!result.rows.length) {
-            return res.status(404).json({ error: 'Order not found' });
+            return res.status(404).json({ error: "Order not found" });
         }
 
         res.json(result.rows[0]);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: 'Could not fetch order status' });
+        res.status(500).json({ error: "Could not fetch order status" });
     }
 });
 
-app.get('/order-success/:id', async (req, res) => {
+app.get("/order-success/:id", async (req, res) => {
     const orderId = req.params.id;
 
     clearCart(req, res);
 
-    const order = await pool.query(
-        `SELECT * FROM orders WHERE id = $1`,
-        [orderId]
-    );
+    const order = await pool.query(`SELECT * FROM orders WHERE id = $1`, [
+        orderId,
+    ]);
 
     if (!order.rows.length) {
-        return res.redirect('/cart');
+        return res.redirect("/cart");
     }
     const getOrderItemsQuery = `
     SELECT 
@@ -674,64 +743,50 @@ app.get('/order-success/:id', async (req, res) => {
         ON u.id = oi.utensil_id
     WHERE oi.order_id = $1
 `;
-    const items = await pool.query(
-        getOrderItemsQuery,
-        [orderId]
-    );
+    const items = await pool.query(getOrderItemsQuery, [orderId]);
 
-
-    res.render('order-success', {
+    res.render("order-success", {
         order: order.rows[0],
-        items: items.rows
+        items: items.rows,
     });
 });
 //mpesa callback
-app.post('/mpesa/callback', async (req, res) => {
+app.post("/mpesa/callback", async (req, res) => {
     try {
-
         const callback = req.body.Body.stkCallback;
         if (callback.ResultCode === 0) {
-            const metadata = callback.CallbackMetadata.Item
+            const metadata = callback.CallbackMetadata.Item;
             const receipt = metadata.find(
-                item => item.Name === "MpesaReceiptNumber"
-            )?.Value
-            const amount = metadata.find(
-                item => item.Name === "Amount"
-            )?.Value
-            const phone = metadata.find(
-                item => item.Name === "PhoneNumber"
-            )?.Value
-            const checkoutRequestId = callback.CheckoutRequestID
-            const MerchantRequestID = callback.MerchantRequestID
+                (item) => item.Name === "MpesaReceiptNumber",
+            )?.Value;
+            const amount = metadata.find((item) => item.Name === "Amount")?.Value;
+            const phone = metadata.find((item) => item.Name === "PhoneNumber")?.Value;
+            const checkoutRequestId = callback.CheckoutRequestID;
+            const MerchantRequestID = callback.MerchantRequestID;
             console.log("Callback CheckoutRequestID:", checkoutRequestId);
-            await pool.query(`UPDATE orders SET payment_status = 'paid', transaction_ref = $1 WHERE checkout_request_id = $2`, [receipt, checkoutRequestId]);
-            console.log('Payment completed', receipt)
-        } else {
-            console.log(
-                "Payment failed:",
-                callback.ResultDesc
+            await pool.query(
+                `UPDATE orders SET payment_status = 'paid', transaction_ref = $1 WHERE checkout_request_id = $2`,
+                [receipt, checkoutRequestId],
             );
+            console.log("Payment completed", receipt);
+        } else {
+            console.log("Payment failed:", callback.ResultDesc);
         }
         res.json({
             ResultCode: 0,
-            ResultDesc: "Accepted"
+            ResultDesc: "Accepted",
         });
-
-
-
     } catch (error) {
         console.log(error);
 
         res.status(500).json({
-            error: "callback failed"
+            error: "callback failed",
         });
     }
-})
-
-
+});
 
 //admin
-app.get('/admin/products', auth, admin, async (req, res) => {
+app.get("/admin/products", auth, admin, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT u.*, c.name AS category_name
@@ -739,95 +794,164 @@ app.get('/admin/products', auth, admin, async (req, res) => {
             LEFT JOIN categories c ON u.category_id = c.id
             ORDER BY u.created_at DESC
         `);
-        res.render('admin/products', { products: result.rows });
+        res.render("admin/products", { products: result.rows });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Could not load products');
+        res.status(500).send("Could not load products");
     }
 });
 
-app.get('/admin/add-product', auth, admin, async (req, res) => {
-    const categories = await pool.query('SELECT * FROM categories')
-    res.render('admin/add-product', { utensil: [], cartQuantity: 2, categories: categories.rows, error: req.query.error || null })
-})
-
-app.post('/admin/add-product', auth, admin, (req, res, next) => {
-    upload.single('image')(req, res, (err) => {
-        if (err) {
-            return res.redirect('/admin/add-product?error=' + encodeURIComponent(err.message));
-        }
-        next();
+app.get("/admin/add-product", auth, admin, async (req, res) => {
+    const categories = await pool.query("SELECT * FROM categories");
+    res.render("admin/add-product", {
+        utensil: [],
+        cartQuantity: 2,
+        categories: categories.rows,
+        error: req.query.error || null,
     });
-}, async (req, res) => {
-    const categories = await pool.query('SELECT * FROM categories');
+});
 
-    try {
-        const { name, description, category_id, price, old_price, stock, badge } = req.body;
+app.post(
+    "/admin/add-product",
+    auth,
+    admin,
+    (req, res, next) => {
+        upload.single("image")(req, res, (err) => {
+            if (err) {
+                return res.redirect(
+                    "/admin/add-product?error=" + encodeURIComponent(err.message),
+                );
+            }
+            next();
+        });
+    },
+    async (req, res) => {
+        const categories = await pool.query("SELECT * FROM categories");
 
-        if (!name?.trim() || !category_id || !price || stock === undefined || stock === '') {
-            return res.status(400).render('admin/add-product', {
-                utensil: [],
-                cartQuantity: 2,
-                categories: categories.rows,
-                error: 'Please fill in all required fields.'
+        try {
+            const { name, description, category_id, price, old_price, stock, badge } =
+                req.body;
+            let is_offer;
+            if (old_price !== price) {
+                is_offer = true;
+            }
+
+            if (
+                !name?.trim() ||
+                !category_id ||
+                !price ||
+                stock === undefined ||
+                stock === ""
+            ) {
+                return res.status(400).render("admin/add-product", {
+                    utensil: [],
+                    cartQuantity: 2,
+                    categories: categories.rows,
+                    error: "Please fill in all required fields.",
+                });
+            }
+
+            if (!req.file) {
+                return res.status(400).render("admin/add-product", {
+                    utensil: [],
+                    cartQuantity: 2,
+                    categories: categories.rows,
+                    error: "Product image is required.",
+                });
+            }
+
+            const imageUrl = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "kitchenware/products" },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result.secure_url);
+                    },
+                );
+                stream.end(req.file.buffer);
             });
-        }
 
-        if (!req.file) {
-            return res.status(400).render('admin/add-product', {
-                utensil: [],
-                cartQuantity: 2,
-                categories: categories.rows,
-                error: 'Product image is required.'
-            });
-        }
-
-        const imageUrl = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                { folder: 'kitchenware/products' },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result.secure_url);
-                }
+            await pool.query(
+                `INSERT INTO utensils(name, description, category_id, price, old_price, stock, badge, image_url, is_offer)
+             VALUES($1,$2,$3,$4,$5,$6,$7,$8, $9)`,
+                [
+                    name,
+                    description,
+                    category_id,
+                    price,
+                    old_price || null,
+                    stock,
+                    badge || null,
+                    imageUrl,
+                    is_offer,
+                ],
             );
-            stream.end(req.file.buffer);
-        });
 
-        await pool.query(
-            `INSERT INTO utensils(name, description, category_id, price, old_price, stock, badge, image_url)
-             VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
-            [name, description, category_id, price, old_price || null, stock, badge || null, imageUrl]
-        );
+            res.redirect("/admin/products");
+        } catch (error) {
+            console.error("Add product failed:", error);
 
-        res.redirect('/admin/products');
-    } catch (error) {
-        console.error('Add product failed:', error);
-
-        res.status(500).render('admin/add-product', {
-            utensil: [],
-            cartQuantity: 2,
-            categories: categories.rows,
-            error: error.message || 'Could not add product. Please try again.'
-        });
-    }
-})
+            res.status(500).render("admin/add-product", {
+                utensil: [],
+                cartQuantity: 2,
+                categories: categories.rows,
+                error: error.message || "Could not add product. Please try again.",
+            });
+        }
+    },
+);
 
 //update stock
-app.put('admin/update-stock', admin, async (req, res) => {
+app.put("admin/update-stock", admin, async (req, res) => {
     try {
-        const { id, stock } = req.body
+        const { id, stock } = req.body;
+    } catch (error) { }
+});
 
-    } catch (error) {
+//reviews post
+app.post("/products/:id/review", auth, async (req, res) => {
+    const { rating, comment } = req.body;
+    const productId = req.params.id;
+    const userId = req.user.userId;
 
+    //verify delivered order exist
+    const delivered = await pool.query(
+        `
+        SELECT *
+        FROM orders o
+        JOIN order_items oi ON o.id = oi.order_id
+        WHERE o.user_id = $1
+        AND oi.product_id = $2
+        AND o.status = 'delivered'
+        `,
+        [userId, productId],
+    );
+    if (delivered.rows.length === 0) {
+        return res.status(403).send("Not eligible to review");
     }
-})
+    const existing = await pool.query(
+        `
+        SELECT *
+        FROM reviews
+        WHERE user_id = $1
+        AND product_id = $2
+        `,
+        [userId, productId],
+    );
 
+    if (existing.rows.length > 0) {
+        return res.status(400).send("You have already reviewed this product");
+    }
 
-
-
-
-
-
+    await pool.query(
+        `
+    INSERT INTO reviews(user_id, product_id, order_id, rating, comment)
+    VALUES($1,$2,$3,$4,$5)
+    `,
+        [userId, productId, delivered.rows[0].order_id, rating, comment],
+    );
+    res.redirect(`/products/${productId}`);
+});
 
 // app.listen(3200, () => {
 //     console.log('Server is running on port 3200');
@@ -840,4 +964,4 @@ if (process.env.NODE_ENV !== "production") {
     });
 }
 
-export default app
+export default app;

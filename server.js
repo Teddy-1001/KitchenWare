@@ -1245,6 +1245,7 @@ app.post("/mpesa/callback", async (req, res) => {
 });
 
 //admin
+//admin get products
 app.get("/admin/products", auth, admin, async (req, res) => {
     try {
         const result = await pool.query(`
@@ -1259,6 +1260,22 @@ app.get("/admin/products", auth, admin, async (req, res) => {
         res.status(500).send("Could not load products");
     }
 });
+
+//admin get orders
+// app.get("/admin/orders", auth, admin, async (req, res) => {
+//     try {
+//         const result = await pool.query(`
+//             SELECT o.*, c.name AS category_name
+//             FROM utensils u
+//             LEFT JOIN categories c ON u.category_id = c.id
+//             ORDER BY u.created_at DESC
+//         `);
+//         res.render("admin/products", { products: result.rows });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send("Could not load products");
+//     }
+// });
 
 app.get("/admin/add-product", auth, admin, async (req, res) => {
     const categories = await pool.query("SELECT * FROM categories");

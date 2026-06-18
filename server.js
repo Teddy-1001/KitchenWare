@@ -207,12 +207,16 @@ pool
         console.error("Error connecting to the database", err);
     });
 
-app.get("/", auth, (req, res) => {
+app.get("/", auth, async (req, res) => {
     // if (!token) {
     //     return res.redirect('/login');
     // }
-    console.log(req.user);
-    res.render("index", { user: req.user });
+
+    const result = await pool.query(
+        "SELECT utensils.*, categories.name AS category_name FROM utensils JOIN categories ON utensils.category_id = categories.id",
+    );
+
+    res.render("index", { user: req.user, result: result.rows });
 });
 app.get("/all-utensils", async (req, res) => {
     // const utensils = [
@@ -943,10 +947,10 @@ app.post("/orders/:id/cancel", async (req, res) => {
                 console.error("M-Pesa B2C refund failed:", refundErr.message || refundErr);
                 return res.redirect(
                     `/orders/${orderId}?message=` +
-                        encodeURIComponent(
-                            refundErr.message ||
-                                "Refund could not be sent. Order was not cancelled — try again or contact support.",
-                        ),
+                    encodeURIComponent(
+                        refundErr.message ||
+                        "Refund could not be sent. Order was not cancelled — try again or contact support.",
+                    ),
                 );
             }
         }
@@ -1278,8 +1282,8 @@ app.post("/test/refund", async (req, res) => {
 
 
         res.status(500).json({
-            success:false,
-            error:error.response?.data || error.message
+            success: false,
+            error: error.response?.data || error.message
         });
     }
 

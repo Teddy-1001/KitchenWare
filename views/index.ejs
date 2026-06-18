@@ -234,7 +234,10 @@
                                             </h4>
 
                                             <p class="text-xs text-zinc-500 mt-1">
-                                                <%= u.description %>
+                                                <%= u.description.length> 50
+                                                    ? u.description.slice(0, 50) + "..."
+                                                    : u.description
+                                                %>
                                             </p>
 
                                             <p class="text-sm font-semibold text-amber-600 mt-1">

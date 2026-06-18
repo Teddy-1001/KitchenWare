@@ -79,7 +79,7 @@ const grantOrderAccess = (req, orderId) => {
 };
 
 const canAccessOrder = (req, order) => {
-    if (req.user?.userId && order.user_id === req.user.userId) return true;
+    if (req.user?.userId && Number(order.user_id) === Number(req.user.userId)) return true;
     const verified = req.session?.verifiedOrders || [];
     return verified.includes(Number(order.id));
 };
@@ -106,6 +106,57 @@ async function restoreOrderStock(orderId) {
             [item.quantity, item.utensil_id],
         );
     }
+}
+
+async function decrementOrderStock(orderId) {
+    const items = await pool.query(
+        `SELECT utensil_id, quantity FROM order_items WHERE order_id = $1`,
+        [orderId],
+    );
+    for (const item of items.rows) {
+        await pool.query(
+            `UPDATE utensils SET stock = GREATEST(stock - $1, 0) WHERE id = $2`,
+            [item.quantity, item.utensil_id],
+        );
+    }
+}
+
+async function getAvailableStock(productId) {
+    const result = await pool.query(
+        `SELECT stock FROM utensils WHERE id = $1`,
+        [productId],
+    );
+    return result.rows[0]?.stock ?? 0;
+}
+
+async function validateCartStock(cart) {
+    for (const item of cart) {
+        const stock = await getAvailableStock(item.id);
+        if (stock < item.quantity) {
+            return {
+                ok: false,
+                name: item.name,
+                available: stock,
+            };
+        }
+    }
+    return { ok: true };
+}
+
+async function deletePendingOrder(orderId) {
+    await pool.query(`DELETE FROM order_items WHERE order_id = $1`, [orderId]);
+    await pool.query(`DELETE FROM orders WHERE id = $1`, [orderId]);
+}
+
+function restoreCartFromOrder(req, res, orderId, items) {
+    req.session.cart = items.map((item) => ({
+        id: item.utensil_id || item.id,
+        name: item.name,
+        price: Number(item.price),
+        image_url: item.image_url,
+        quantity: item.quantity,
+    }));
+    syncCartCookie(req, res);
 }
 
 const __filename = fileURLToPath(import.meta.url);
@@ -674,6 +725,15 @@ app.post("/checkout/place-order", async (req, res) => {
     }
 
     try {
+        const stockCheck = await validateCartStock(cart);
+        if (!stockCheck.ok) {
+            return res.status(400).json({
+                error: stockCheck.available <= 0
+                    ? `${stockCheck.name} is out of stock`
+                    : `Only ${stockCheck.available} of ${stockCheck.name} available`,
+            });
+        }
+
         const { subtotal, shipping, total } = calcOrderTotals(cart);
 
         const orderResult = await pool.query(
@@ -713,15 +773,25 @@ app.post("/checkout/place-order", async (req, res) => {
         if (payment_method === "mpesa") {
             const payPhone = formatPhone(mpesa_phone || phone);
             if (!payPhone) {
+                await deletePendingOrder(orderId);
                 return res
                     .status(400)
                     .json({ error: "M-Pesa phone number is required" });
             }
 
-            const stkResponse = await stkPush(payPhone, Math.round(total), orderId);
-            console.log(stkResponse);
+            let stkResponse;
+            try {
+                stkResponse = await stkPush(payPhone, Math.round(total), orderId);
+            } catch (stkErr) {
+                console.error("STK push error:", stkErr.response?.data || stkErr.message);
+                await deletePendingOrder(orderId);
+                return res.status(400).json({
+                    error: stkErr.response?.data?.errorMessage || "Could not send M-Pesa prompt. Try again.",
+                });
+            }
 
             if (stkResponse.ResponseCode !== "0") {
+                await deletePendingOrder(orderId);
                 return res.status(400).json({
                     error: stkResponse.ResponseDescription || "M-Pesa STK push failed",
                 });
@@ -733,7 +803,7 @@ app.post("/checkout/place-order", async (req, res) => {
                 [checkoutRequestId, orderId],
             );
 
-            clearCart(req, res);
+            grantOrderAccess(req, orderId);
 
             return res.json({
                 success: true,
@@ -745,6 +815,7 @@ app.post("/checkout/place-order", async (req, res) => {
             });
         }
 
+        await decrementOrderStock(orderId);
         clearCart(req, res);
 
         return res.json({
@@ -779,8 +850,6 @@ app.get("/checkout/order-status/:id", async (req, res) => {
 app.get("/order-success/:id", async (req, res) => {
     const orderId = req.params.id;
 
-    clearCart(req, res);
-
     const order = await pool.query(`SELECT * FROM orders WHERE id = $1`, [
         orderId,
     ]);
@@ -788,24 +857,34 @@ app.get("/order-success/:id", async (req, res) => {
     if (!order.rows.length) {
         return res.redirect("/cart");
     }
-    const getOrderItemsQuery = `
-    SELECT 
-        oi.id,
-        oi.quantity,
-        oi.price,
-        u.name,
-        u.image_url
-    FROM order_items oi
-    JOIN utensils u 
-        ON u.id = oi.utensil_id
-    WHERE oi.order_id = $1
-`;
+
+    const orderData = order.rows[0];
+
+    if (orderData.payment_status !== "paid") {
+        grantOrderAccess(req, orderId);
+        return res.redirect(
+            `/orders/${orderId}?message=` +
+                encodeURIComponent(
+                    orderData.payment_status === "failed"
+                        ? "Payment failed. You can retry or cancel your order."
+                        : "Payment not completed yet. Retry payment or cancel the order.",
+                ),
+        );
+    }
+
+    clearCart(req, res);
     grantOrderAccess(req, orderId);
 
-    const items = await pool.query(getOrderItemsQuery, [orderId]);
+    const items = await pool.query(
+        `SELECT oi.id, oi.quantity, oi.price, u.name, u.image_url
+         FROM order_items oi
+         JOIN utensils u ON u.id = oi.utensil_id
+         WHERE oi.order_id = $1`,
+        [orderId],
+    );
 
     res.render("order-success", {
-        order: order.rows[0],
+        order: orderData,
         items: items.rows,
     });
 });
@@ -890,7 +969,11 @@ app.get("/orders/:id", async (req, res) => {
         res.render("order-detail", {
             order: orderData,
             items,
-            canCancel: canCancelOrder(orderData),
+            canCancel: canCancelOrder(orderData) && orderData.status !== "cancelled",
+            canRetry:
+                ["unpaid", "failed"].includes(orderData.payment_status) &&
+                orderData.payment_method === "mpesa" &&
+                orderData.status !== "cancelled",
             message: req.query.message || null,
         });
     } catch (err) {
@@ -947,15 +1030,15 @@ app.post("/orders/:id/cancel", async (req, res) => {
                 console.error("M-Pesa B2C refund failed:", refundErr.message || refundErr);
                 return res.redirect(
                     `/orders/${orderId}?message=` +
-                    encodeURIComponent(
-                        refundErr.message ||
-                        "Refund could not be sent. Order was not cancelled — try again or contact support.",
-                    ),
+                        encodeURIComponent(
+                            refundErr.message ||
+                                "Refund could not be sent. Order was not cancelled — try again or contact support.",
+                        ),
                 );
             }
+            await restoreOrderStock(orderId);
         }
 
-        await restoreOrderStock(orderId);
         await pool.query(
             `UPDATE orders SET status = 'cancelled', updated_at = NOW() WHERE id = $1`,
             [orderId],
@@ -982,6 +1065,73 @@ app.post("/orders/:id/cancel", async (req, res) => {
         );
     }
 });
+
+app.post("/orders/:id/retry-payment", async (req, res) => {
+    const orderId = req.params.id;
+
+    try {
+        const order = await pool.query(`SELECT * FROM orders WHERE id = $1`, [orderId]);
+
+        if (!order.rows.length) {
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        const orderData = order.rows[0];
+
+        if (!canAccessOrder(req, orderData)) {
+            return res.status(403).json({ error: "Access denied" });
+        }
+
+        if (!["unpaid", "failed"].includes(orderData.payment_status)) {
+            return res.status(400).json({ error: "This order does not need payment retry" });
+        }
+
+        if (orderData.payment_method !== "mpesa") {
+            return res.status(400).json({ error: "Only M-Pesa orders support payment retry" });
+        }
+
+        if (orderData.status === "cancelled") {
+            return res.status(400).json({ error: "Cannot pay for a cancelled order" });
+        }
+
+        const payPhone = formatPhone(req.body.mpesa_phone || orderData.phone);
+        if (!payPhone) {
+            return res.status(400).json({ error: "M-Pesa phone number is required" });
+        }
+
+        let stkResponse;
+        try {
+            stkResponse = await stkPush(payPhone, Math.round(Number(orderData.total)), orderId);
+        } catch (stkErr) {
+            console.error("STK retry error:", stkErr.response?.data || stkErr.message);
+            return res.status(400).json({
+                error: stkErr.response?.data?.errorMessage || "Could not send M-Pesa prompt",
+            });
+        }
+
+        if (stkResponse.ResponseCode !== "0") {
+            return res.status(400).json({
+                error: stkResponse.ResponseDescription || "M-Pesa STK push failed",
+            });
+        }
+
+        await pool.query(
+            `UPDATE orders SET checkout_request_id = $1, payment_status = 'unpaid', updated_at = NOW()
+             WHERE id = $2`,
+            [stkResponse.CheckoutRequestID, orderId],
+        );
+
+        res.json({
+            success: true,
+            orderId,
+            message: "STK Push sent. Enter your M-Pesa PIN.",
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Could not retry payment" });
+    }
+});
+
 //refund result>>on success
 app.post("/mpesa/refund-result", async (req, res) => {
     try {
@@ -1047,35 +1197,50 @@ app.post("/mpesa/refund-timeout", async (req, res) => {
 //mpesa callback
 app.post("/mpesa/callback", async (req, res) => {
     try {
-        const callback = req.body.Body.stkCallback;
+        const callback = req.body.Body?.stkCallback;
+        if (!callback) {
+            return res.json({ ResultCode: 0, ResultDesc: "Accepted" });
+        }
+
+        const checkoutRequestId = callback.CheckoutRequestID;
+
         if (callback.ResultCode === 0) {
-            const metadata = callback.CallbackMetadata.Item;
+            const metadata = callback.CallbackMetadata?.Item || [];
             const receipt = metadata.find(
                 (item) => item.Name === "MpesaReceiptNumber",
             )?.Value;
-            const amount = metadata.find((item) => item.Name === "Amount")?.Value;
-            const phone = metadata.find((item) => item.Name === "PhoneNumber")?.Value;
-            const checkoutRequestId = callback.CheckoutRequestID;
-            const MerchantRequestID = callback.MerchantRequestID;
-            console.log("Callback CheckoutRequestID:", checkoutRequestId);
+
+            const order = await pool.query(
+                `SELECT id, payment_status FROM orders WHERE checkout_request_id = $1`,
+                [checkoutRequestId],
+            );
+
+            if (order.rows.length && order.rows[0].payment_status !== "paid") {
+                await decrementOrderStock(order.rows[0].id);
+            }
+
             await pool.query(
-                `UPDATE orders SET payment_status = 'paid', transaction_ref = $1 WHERE checkout_request_id = $2`,
+                `UPDATE orders SET payment_status = 'paid', status = 'processing', transaction_ref = $1, updated_at = NOW()
+                 WHERE checkout_request_id = $2`,
                 [receipt, checkoutRequestId],
             );
-            console.log("Payment completed", receipt);
+            console.log("Payment completed:", receipt);
         } else {
             console.log("Payment failed:", callback.ResultDesc);
+            await pool.query(
+                `UPDATE orders SET payment_status = 'failed', updated_at = NOW()
+                 WHERE checkout_request_id = $1 AND payment_status = 'unpaid'`,
+                [checkoutRequestId],
+            );
         }
+
         res.json({
             ResultCode: 0,
             ResultDesc: "Accepted",
         });
     } catch (error) {
-        console.log(error);
-
-        res.status(500).json({
-            error: "callback failed",
-        });
+        console.error("M-Pesa callback error:", error);
+        res.status(500).json({ error: "callback failed" });
     }
 });
 

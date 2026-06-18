@@ -402,14 +402,21 @@
                             window.location.href = `/order-success/${orderId}`;
                             return;
                         }
+
+                        if (data.payment_status === 'failed') {
+                            hideModal();
+                            window.location.href = `/orders/${orderId}?message=` +
+                                encodeURIComponent('Payment failed or was cancelled. Retry payment or cancel your order.');
+                            return;
+                        }
                     } catch (err) {
                         // keep polling
                     }
                 }
 
-                showModal('Payment still pending. Redirecting to order details...');
-                await sleep(1500);
-                window.location.href = `/order-success/${orderId}`;
+                hideModal();
+                window.location.href = `/orders/${orderId}?message=` +
+                    encodeURIComponent('Payment not received yet. Retry payment or cancel the order.');
             }
 
             function sleep(ms) {

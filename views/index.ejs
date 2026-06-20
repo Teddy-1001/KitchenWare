@@ -293,6 +293,7 @@
                     <% result.slice(4,8).reverse().forEach((u)=> { %>
                         <div
                             class="group bg-white border border-zinc-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-amber-200/80 transition duration-300">
+                            <a href="/utensil/<%= u.id %>">
 
                             <!-- IMAGE -->
                             <div class="relative overflow-hidden bg-zinc-100">
@@ -340,6 +341,7 @@
                                     </form>
                                 </div>
                             </div>
+                            </a>
                         </div>
                         <% }) %>
 
